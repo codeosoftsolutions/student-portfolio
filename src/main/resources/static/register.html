@@ -1,0 +1,526 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Register — StudentTap</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --accent:#6366f1;--accent2:#818cf8;
+  --danger:#ef4444;--success:#22c55e;
+  --text:#1e293b;--muted:#64748b;
+  --border:#e2e8f0;--card:#ffffff;--bg:#f1f5f9;
+}
+body{
+  font-family:'Sora',sans-serif;
+  min-height:100vh;background:var(--bg);
+  display:flex;align-items:center;
+  justify-content:center;padding:24px;
+}
+.register-container{
+  width:100%;max-width:560px;
+  background:var(--card);border-radius:20px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.08);
+  overflow:hidden;
+  animation:fadeUp 0.5s ease forwards;
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(24px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+.register-header{
+  background:linear-gradient(135deg,#0f172a,#312e81);
+  padding:32px;text-align:center;
+}
+.header-icon{
+  width:60px;height:60px;background:var(--accent);
+  border-radius:16px;display:flex;align-items:center;
+  justify-content:center;font-size:28px;
+  margin:0 auto 14px;
+  box-shadow:0 4px 20px rgba(99,102,241,0.4);
+}
+.header-title{
+  font-family:'DM Serif Display',serif;
+  font-size:26px;color:#fff;margin-bottom:4px;
+}
+.header-sub{font-size:13px;color:rgba(255,255,255,0.6);}
+
+.register-body{padding:28px 32px;}
+
+.alert{
+  padding:12px 16px;border-radius:10px;
+  font-size:13px;margin-bottom:20px;
+  display:none;align-items:center;gap:8px;
+}
+.alert.error{background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;}
+.alert.success{background:#f0fdf4;border:1px solid #86efac;color:#16a34a;}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{margin-bottom:16px;}
+.form-group.full{grid-column:1/-1;}
+.form-label{
+  display:block;font-size:12px;font-weight:600;
+  color:var(--text);margin-bottom:6px;
+}
+.form-label span{color:var(--danger);}
+.input-wrap{position:relative;}
+.form-input,.form-select{
+  width:100%;padding:11px 16px 11px 42px;
+  border:1.5px solid var(--border);
+  border-radius:10px;font-family:'Sora',sans-serif;
+  font-size:13px;color:var(--text);
+  background:var(--bg);transition:all 0.2s;outline:none;
+}
+.form-select{padding-left:42px;}
+.form-input:focus,.form-select:focus{
+  border-color:var(--accent);background:#fff;
+  box-shadow:0 0 0 3px rgba(99,102,241,0.1);
+}
+.form-input.valid{border-color:var(--success);}
+.form-input.invalid{border-color:var(--danger);}
+.input-icon{
+  position:absolute;left:13px;top:50%;
+  transform:translateY(-50%);font-size:15px;
+  pointer-events:none;
+}
+.input-status{
+  position:absolute;right:13px;top:50%;
+  transform:translateY(-50%);font-size:14px;
+}
+.form-error{
+  font-size:11px;color:var(--danger);
+  margin-top:4px;display:none;
+}
+.form-hint{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* Username availability */
+.username-status{
+  font-size:11px;margin-top:4px;display:none;
+}
+.username-status.available{color:var(--success);}
+.username-status.taken{color:var(--danger);}
+
+/* Type selector */
+.type-selector{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+}
+.type-option{
+  border:2px solid var(--border);border-radius:10px;
+  padding:12px;text-align:center;cursor:pointer;
+  transition:all 0.2s;
+}
+.type-option:hover{border-color:var(--accent);}
+.type-option.selected{
+  border-color:var(--accent);background:#eef2ff;
+}
+.type-option input{display:none;}
+.type-icon{font-size:24px;margin-bottom:4px;}
+.type-label{font-size:12px;font-weight:700;color:var(--text);}
+.type-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* Password strength */
+.pwd-strength{margin-top:6px;}
+.strength-bar{
+  height:4px;border-radius:2px;background:var(--border);
+  overflow:hidden;margin-bottom:4px;
+}
+.strength-fill{
+  height:100%;border-radius:2px;
+  width:0%;transition:all 0.3s;
+}
+.strength-text{font-size:11px;color:var(--muted);}
+
+.btn-register{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;border:none;border-radius:12px;
+  font-family:'Sora',sans-serif;font-size:14px;
+  font-weight:700;cursor:pointer;
+  transition:all 0.2s;margin-top:8px;
+  display:flex;align-items:center;
+  justify-content:center;gap:8px;
+  box-shadow:0 4px 16px rgba(99,102,241,0.35);
+}
+.btn-register:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(99,102,241,0.45);
+}
+.btn-register:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+
+.login-link{
+  text-align:center;font-size:13px;
+  color:var(--muted);margin-top:16px;
+}
+.login-link a{
+  color:var(--accent);font-weight:600;
+  text-decoration:none;
+}
+.login-link a:hover{text-decoration:underline;}
+
+.spinner{
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,0.4);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin 0.7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:560px){
+  .register-body{padding:20px;}
+  .form-row{grid-template-columns:1fr;}
+  .register-container{border-radius:0;}
+  body{padding:0;}
+}
+</style>
+</head>
+<body>
+
+<div class="register-container">
+
+  <!-- Header -->
+  <div class="register-header">
+    <div class="header-icon">🎓</div>
+    <div class="header-title">Create Your Portfolio</div>
+    <div class="header-sub">
+      Join StudentTap — your NFC digital portfolio
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="register-body">
+
+    <!-- Alert -->
+    <div class="alert error" id="alert-box">
+      <span>⚠️</span><span id="alert-msg"></span>
+    </div>
+
+    <div class="form-row">
+
+      <!-- Full Name -->
+      <div class="form-group">
+        <label class="form-label">
+          Full Name <span>*</span>
+        </label>
+        <div class="input-wrap">
+          <span class="input-icon">👤</span>
+          <input class="form-input" type="text"
+            id="fullName" placeholder="Arjun Sharma"
+            oninput="validateName()"/>
+        </div>
+        <div class="form-error" id="err-name">
+          Full name is required
+        </div>
+      </div>
+
+      <!-- Username -->
+      <div class="form-group">
+        <label class="form-label">
+          Username <span>*</span>
+        </label>
+        <div class="input-wrap">
+          <span class="input-icon">🔖</span>
+          <input class="form-input" type="text"
+            id="username"
+            placeholder="arjun-sharma"
+            oninput="validateUsername()"/>
+        </div>
+        <div class="form-error" id="err-username">
+          Username 3-50 chars, no spaces
+        </div>
+        <div class="username-status" id="username-status"></div>
+        <div class="form-hint">
+          Your portfolio URL: /student/<b id="username-preview">username</b>
+        </div>
+      </div>
+
+      <!-- Email -->
+      <div class="form-group full">
+        <label class="form-label">
+          Email Address <span>*</span>
+        </label>
+        <div class="input-wrap">
+          <span class="input-icon">✉️</span>
+          <input class="form-input" type="email"
+            id="email" placeholder="your@email.com"
+            oninput="validateEmail()"/>
+        </div>
+        <div class="form-error" id="err-email">
+          Please enter a valid email
+        </div>
+      </div>
+
+      <!-- Phone -->
+      <div class="form-group">
+        <label class="form-label">Phone Number</label>
+        <div class="input-wrap">
+          <span class="input-icon">📱</span>
+          <input class="form-input" type="tel"
+            id="phone" placeholder="+91 98765 43210"/>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label class="form-label">
+          Password <span>*</span>
+        </label>
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input class="form-input" type="password"
+            id="password" placeholder="Min 6 characters"
+            oninput="checkPasswordStrength()"/>
+        </div>
+        <div class="pwd-strength">
+          <div class="strength-bar">
+            <div class="strength-fill" id="strength-fill"></div>
+          </div>
+          <div class="strength-text" id="strength-text"></div>
+        </div>
+        <div class="form-error" id="err-pwd">
+          Password must be at least 6 characters
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Candidate Type -->
+    <div class="form-group" style="margin-bottom:20px;">
+      <label class="form-label">I am a <span>*</span></label>
+      <div class="type-selector">
+        <div class="type-option selected"
+          onclick="selectType('fresher',this)"
+          id="type-fresher">
+          <input type="radio" name="type"
+            value="true" checked/>
+          <div class="type-icon">🎓</div>
+          <div class="type-label">Fresher</div>
+          <div class="type-desc">
+            Student or recent graduate
+          </div>
+        </div>
+        <div class="type-option"
+          onclick="selectType('experienced',this)"
+          id="type-experienced">
+          <input type="radio" name="type" value="false"/>
+          <div class="type-icon">💼</div>
+          <div class="type-label">Experienced</div>
+          <div class="type-desc">
+            Working professional
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Register Button -->
+    <button class="btn-register"
+      id="register-btn" onclick="register()">
+      🚀 Create My Portfolio
+    </button>
+
+    <div class="login-link">
+      Already have an account?
+      <a href="login.html">Login here →</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8080';
+let isFresher = true;
+let usernameTimer = null;
+
+// If already logged in
+if (localStorage.getItem('token')) {
+  window.location.href = 'dashboard.html';
+}
+
+function selectType(type, el) {
+  document.querySelectorAll('.type-option')
+    .forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  isFresher = type === 'fresher';
+}
+
+function validateName() {
+  const val = document.getElementById('fullName').value.trim();
+  const err = document.getElementById('err-name');
+  if (!val) {
+    err.style.display = 'block';
+    return false;
+  }
+  err.style.display = 'none';
+  return true;
+}
+
+function validateEmail() {
+  const val = document.getElementById('email').value.trim();
+  const err = document.getElementById('err-email');
+  const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+  if (!valid) {
+    err.style.display = 'block';
+    return false;
+  }
+  err.style.display = 'none';
+  return true;
+}
+
+function validateUsername() {
+  const val = document.getElementById('username').value
+    .toLowerCase().trim().replace(/\s+/g, '-');
+  document.getElementById('username').value = val;
+  document.getElementById('username-preview').textContent =
+    val || 'username';
+
+  const err = document.getElementById('err-username');
+  const status = document.getElementById('username-status');
+
+  if (val.length < 3) {
+    err.style.display = 'block';
+    status.style.display = 'none';
+    return false;
+  }
+  err.style.display = 'none';
+
+  // Check availability after typing stops
+  clearTimeout(usernameTimer);
+  status.style.display = 'none';
+  usernameTimer = setTimeout(async () => {
+    try {
+      const res = await fetch(
+        API + '/api/auth/check-username/' + val);
+      const data = await res.json();
+      if (data.success) {
+        status.textContent = '✅ Username is available!';
+        status.className = 'username-status available';
+      } else {
+        status.textContent = '❌ Username already taken';
+        status.className = 'username-status taken';
+      }
+      status.style.display = 'block';
+    } catch(e) {}
+  }, 600);
+  return true;
+}
+
+function checkPasswordStrength() {
+  const pwd = document.getElementById('password').value;
+  const fill = document.getElementById('strength-fill');
+  const text = document.getElementById('strength-text');
+  const err = document.getElementById('err-pwd');
+
+  if (pwd.length < 6) {
+    err.style.display = 'block';
+  } else {
+    err.style.display = 'none';
+  }
+
+  let strength = 0;
+  if (pwd.length >= 6) strength++;
+  if (pwd.length >= 10) strength++;
+  if (/[A-Z]/.test(pwd)) strength++;
+  if (/[0-9]/.test(pwd)) strength++;
+  if (/[^A-Za-z0-9]/.test(pwd)) strength++;
+
+  const levels = [
+    {w:'0%', c:'transparent', t:''},
+    {w:'25%', c:'#ef4444', t:'Weak'},
+    {w:'50%', c:'#f59e0b', t:'Fair'},
+    {w:'75%', c:'#3b82f6', t:'Good'},
+    {w:'100%', c:'#22c55e', t:'Strong'},
+  ];
+  const l = levels[Math.min(strength, 4)];
+  fill.style.width = l.w;
+  fill.style.background = l.c;
+  text.textContent = l.t;
+  text.style.color = l.c;
+}
+
+async function register() {
+  const btn = document.getElementById('register-btn');
+  const alertBox = document.getElementById('alert-box');
+  alertBox.style.display = 'none';
+
+  // Validate all fields
+  const nameOk = validateName();
+  const emailOk = validateEmail();
+  const usernameOk = validateUsername();
+  const pwd = document.getElementById('password').value;
+
+  if (!nameOk || !emailOk || !usernameOk) return;
+  if (pwd.length < 6) {
+    document.getElementById('err-pwd').style.display = 'block';
+    return;
+  }
+
+  const body = {
+    fullName: document.getElementById('fullName').value.trim(),
+    username: document.getElementById('username').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    password: pwd,
+    phone: document.getElementById('phone').value.trim(),
+    isFresher: isFresher
+  };
+
+  // Show loading
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Creating portfolio...';
+
+  try {
+    const res = await fetch(API + '/api/auth/register', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      // Registration success — auto login
+      btn.innerHTML = '✅ Success! Logging you in...';
+
+      // Auto login
+      const loginRes = await fetch(API + '/api/auth/login', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          email: body.email,
+          password: body.password
+        })
+      });
+      const loginData = await loginRes.json();
+
+      if (loginData.token) {
+        localStorage.setItem('token', loginData.token);
+        localStorage.setItem('user', JSON.stringify({
+          username: loginData.username,
+          fullName: loginData.fullName,
+          email: loginData.email,
+          isFresher: loginData.isFresher
+        }));
+        window.location.href = 'dashboard.html';
+      } else {
+        window.location.href = 'login.html';
+      }
+    } else {
+      document.getElementById('alert-msg').textContent =
+        data.message || 'Registration failed!';
+      alertBox.style.display = 'flex';
+      btn.disabled = false;
+      btn.innerHTML = '🚀 Create My Portfolio';
+    }
+  } catch(e) {
+    document.getElementById('alert-msg').textContent =
+      'Cannot connect to server. Is the app running?';
+    alertBox.style.display = 'flex';
+    btn.disabled = false;
+    btn.innerHTML = '🚀 Create My Portfolio';
+  }
+}
+</script>
+</body>
+</html>

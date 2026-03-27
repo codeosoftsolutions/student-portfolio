@@ -1,0 +1,379 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Login — StudentTap</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --accent:#6366f1;
+  --accent2:#818cf8;
+  --danger:#ef4444;
+  --success:#22c55e;
+  --text:#1e293b;
+  --muted:#64748b;
+  --border:#e2e8f0;
+  --card:#ffffff;
+  --bg:#f1f5f9;
+}
+body{
+  font-family:'Sora',sans-serif;
+  min-height:100vh;
+  display:flex;
+  background:var(--bg);
+  overflow:hidden;
+}
+
+/* LEFT PANEL */
+.left-panel{
+  flex:1;
+  background:linear-gradient(145deg,#0f172a 0%,#1e1b4b 50%,#312e81 100%);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:48px;
+  position:relative;
+  overflow:hidden;
+}
+.left-panel::before{
+  content:'';position:absolute;
+  width:400px;height:400px;
+  background:rgba(99,102,241,0.15);
+  border-radius:50%;top:-100px;right:-100px;
+}
+.left-panel::after{
+  content:'';position:absolute;
+  width:300px;height:300px;
+  background:rgba(129,140,248,0.1);
+  border-radius:50%;bottom:-80px;left:-80px;
+}
+.brand{
+  position:relative;z-index:2;
+  text-align:center;
+  animation:fadeUp 0.6s ease forwards;
+}
+.brand-icon{
+  width:72px;height:72px;
+  background:var(--accent);
+  border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;margin:0 auto 20px;
+  box-shadow:0 8px 32px rgba(99,102,241,0.4);
+}
+.brand-name{
+  font-family:'DM Serif Display',serif;
+  font-size:36px;color:#fff;margin-bottom:8px;
+}
+.brand-tagline{
+  font-size:14px;color:rgba(255,255,255,0.6);
+  line-height:1.6;max-width:280px;margin:0 auto;
+}
+
+.features{
+  position:relative;z-index:2;
+  margin-top:48px;display:flex;
+  flex-direction:column;gap:16px;width:100%;max-width:320px;
+}
+.feature-item{
+  display:flex;align-items:center;gap:14px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;padding:14px 16px;
+  animation:fadeUp 0.6s ease forwards;
+}
+.feature-item:nth-child(2){animation-delay:0.1s;}
+.feature-item:nth-child(3){animation-delay:0.2s;}
+.feature-icon{font-size:22px;}
+.feature-text{font-size:13px;color:rgba(255,255,255,0.7);font-weight:500;}
+
+/* RIGHT PANEL */
+.right-panel{
+  width:480px;
+  display:flex;align-items:center;justify-content:center;
+  padding:32px;background:var(--card);
+  box-shadow:-4px 0 24px rgba(0,0,0,0.08);
+}
+.login-box{width:100%;max-width:380px;}
+
+.login-header{margin-bottom:32px;}
+.login-title{
+  font-family:'DM Serif Display',serif;
+  font-size:28px;color:var(--text);margin-bottom:6px;
+}
+.login-sub{font-size:14px;color:var(--muted);}
+
+.form-group{margin-bottom:18px;}
+.form-label{
+  display:block;font-size:12px;font-weight:600;
+  color:var(--text);margin-bottom:6px;
+}
+.input-wrap{position:relative;}
+.form-input{
+  width:100%;padding:12px 16px 12px 44px;
+  border:1.5px solid var(--border);
+  border-radius:12px;font-family:'Sora',sans-serif;
+  font-size:13px;color:var(--text);
+  background:var(--bg);transition:all 0.2s;outline:none;
+}
+.form-input:focus{
+  border-color:var(--accent);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(99,102,241,0.1);
+}
+.input-icon{
+  position:absolute;left:14px;top:50%;
+  transform:translateY(-50%);font-size:16px;
+}
+.input-toggle{
+  position:absolute;right:14px;top:50%;
+  transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;
+  font-size:16px;color:var(--muted);
+}
+.form-error{
+  font-size:11px;color:var(--danger);
+  margin-top:4px;display:none;
+}
+
+.btn-login{
+  width:100%;padding:13px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;border:none;border-radius:12px;
+  font-family:'Sora',sans-serif;font-size:14px;
+  font-weight:700;cursor:pointer;
+  transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 4px 16px rgba(99,102,241,0.35);
+  margin-top:24px;
+}
+.btn-login:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(99,102,241,0.45);
+}
+.btn-login:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+
+.divider{
+  display:flex;align-items:center;gap:12px;
+  margin:20px 0;
+}
+.divider-line{flex:1;height:1px;background:var(--border);}
+.divider-text{font-size:12px;color:var(--muted);}
+
+.register-link{
+  text-align:center;font-size:13px;color:var(--muted);
+}
+.register-link a{
+  color:var(--accent);font-weight:600;
+  text-decoration:none;
+}
+.register-link a:hover{text-decoration:underline;}
+
+.alert{
+  padding:12px 16px;border-radius:10px;
+  font-size:13px;margin-bottom:16px;display:none;
+  align-items:center;gap:8px;
+}
+.alert.error{
+  background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;
+}
+.alert.success{
+  background:#f0fdf4;border:1px solid #86efac;color:#16a34a;
+}
+
+.spinner{
+  width:16px;height:16px;
+  border:2px solid rgba(255,255,255,0.4);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin 0.7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@media(max-width:768px){
+  .left-panel{display:none;}
+  .right-panel{width:100%;box-shadow:none;background:var(--bg);}
+  .login-box{padding:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="left-panel">
+  <div class="brand">
+    <div class="brand-icon">🎓</div>
+    <div class="brand-name">StudentTap</div>
+    <div class="brand-tagline">
+      Your digital NFC portfolio — tap your card,<br/>
+      share your story with the world
+    </div>
+  </div>
+  <div class="features">
+    <div class="feature-item">
+      <div class="feature-icon">📇</div>
+      <div class="feature-text">One tap shares your complete portfolio</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">📄</div>
+      <div class="feature-text">Professional resume with 4 templates</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon">✉️</div>
+      <div class="feature-text">Receive messages from recruiters directly</div>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+  <div class="login-box">
+    <div class="login-header">
+      <h1 class="login-title">Welcome back 👋</h1>
+      <p class="login-sub">Login to manage your portfolio</p>
+    </div>
+
+    <!-- Alert -->
+    <div class="alert error" id="alert-error">
+      <span>⚠️</span><span id="alert-msg">Invalid credentials</span>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label class="form-label">Email Address</label>
+      <div class="input-wrap">
+        <span class="input-icon">✉️</span>
+        <input class="form-input" type="email"
+          id="email" placeholder="your@email.com"
+          onkeydown="if(event.key==='Enter')login()"/>
+      </div>
+      <div class="form-error" id="err-email">
+        Please enter a valid email
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input class="form-input" type="password"
+          id="password" placeholder="Enter your password"
+          onkeydown="if(event.key==='Enter')login()"/>
+        <button class="input-toggle" onclick="togglePwd()"
+          id="pwd-toggle" type="button">👁️</button>
+      </div>
+      <div class="form-error" id="err-pwd">
+        Password is required
+      </div>
+    </div>
+
+    <!-- Login Button -->
+    <button class="btn-login" id="login-btn" onclick="login()">
+      🚀 Login to Dashboard
+    </button>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <div class="divider-text">New to StudentTap?</div>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="register-link">
+      Don't have an account?
+      <a href="register.html">Create your portfolio →</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'http://localhost:8080';
+
+// If already logged in go to dashboard
+if (localStorage.getItem('token')) {
+  window.location.href = 'dashboard.html';
+}
+
+function togglePwd() {
+  const input = document.getElementById('password');
+  const btn = document.getElementById('pwd-toggle');
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    btn.textContent = '👁️';
+  }
+}
+
+async function login() {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+  const btn = document.getElementById('login-btn');
+  const alert = document.getElementById('alert-error');
+
+  // Hide previous errors
+  alert.style.display = 'none';
+  document.getElementById('err-email').style.display = 'none';
+  document.getElementById('err-pwd').style.display = 'none';
+
+  // Validate
+  let valid = true;
+  if (!email || !email.includes('@')) {
+    document.getElementById('err-email').style.display = 'block';
+    valid = false;
+  }
+  if (!password) {
+    document.getElementById('err-pwd').style.display = 'block';
+    valid = false;
+  }
+  if (!valid) return;
+
+  // Show loading
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> Logging in...';
+
+  try {
+    const res = await fetch(API + '/api/auth/login', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({email, password})
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.token) {
+      // Save token and user info
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify({
+        username: data.username,
+        fullName: data.fullName,
+        email: data.email,
+        isFresher: data.isFresher
+      }));
+      // Go to dashboard
+      window.location.href = 'dashboard.html';
+    } else {
+      // Show error
+      document.getElementById('alert-msg').textContent =
+        data.message || 'Invalid email or password!';
+      alert.style.display = 'flex';
+      btn.disabled = false;
+      btn.innerHTML = '🚀 Login to Dashboard';
+    }
+  } catch(e) {
+    document.getElementById('alert-msg').textContent =
+      'Cannot connect to server. Is the app running?';
+    alert.style.display = 'flex';
+    btn.disabled = false;
+    btn.innerHTML = '🚀 Login to Dashboard';
+  }
+}
+</script>
+</body>
+</html>

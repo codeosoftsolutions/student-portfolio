@@ -1,0 +1,1790 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Student Dashboard — StudentTap</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --primary:#0f172a;
+  --accent:#6366f1;
+  --accent2:#818cf8;
+  --success:#22c55e;
+  --danger:#ef4444;
+  --warning:#f59e0b;
+  --bg:#f1f5f9;
+  --card:#ffffff;
+  --border:#e2e8f0;
+  --text:#1e293b;
+  --muted:#64748b;
+  --sidebar-w:260px;
+}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;}
+
+/* ===== SIDEBAR ===== */
+.sidebar{
+  width:var(--sidebar-w);background:var(--primary);
+  min-height:100vh;position:fixed;left:0;top:0;
+  display:flex;flex-direction:column;z-index:100;
+  transition:transform 0.3s;
+}
+.sidebar-logo{
+  padding:24px 20px;border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;gap:10px;
+}
+.logo-icon{
+  width:36px;height:36px;background:var(--accent);
+  border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:18px;
+}
+.logo-text{font-size:16px;font-weight:700;color:#fff;letter-spacing:0.5px;}
+.logo-sub{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;}
+
+.sidebar-nav{flex:1;padding:16px 12px;overflow-y:auto;}
+.nav-section{margin-bottom:24px;}
+.nav-section-title{
+  font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,0.3);padding:0 8px;margin-bottom:8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:10px;
+  color:rgba(255,255,255,0.6);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all 0.2s;margin-bottom:2px;
+  border:none;background:none;width:100%;text-align:left;
+}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.nav-item.active{background:var(--accent);color:#fff;box-shadow:0 4px 12px rgba(99,102,241,0.4);}
+.nav-item .icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.nav-badge{
+  margin-left:auto;background:var(--danger);color:#fff;
+  font-size:10px;font-weight:700;padding:2px 6px;
+  border-radius:10px;min-width:18px;text-align:center;
+}
+
+.sidebar-footer{
+  padding:16px;border-top:1px solid rgba(255,255,255,0.08);
+}
+.student-info{
+  display:flex;align-items:center;gap:10px;
+  padding:10px;border-radius:10px;
+  background:rgba(255,255,255,0.05);
+}
+.student-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--accent);display:flex;
+  align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:#fff;
+  flex-shrink:0;overflow:hidden;
+}
+.student-avatar img{width:100%;height:100%;object-fit:cover;}
+.student-name{font-size:12px;font-weight:600;color:#fff;}
+.student-email{font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px;}
+.btn-logout{
+  width:100%;margin-top:10px;padding:8px;
+  background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);
+  color:#fca5a5;border-radius:8px;font-family:'Sora',sans-serif;
+  font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;
+}
+.btn-logout:hover{background:rgba(239,68,68,0.25);}
+
+/* ===== MAIN CONTENT ===== */
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;}
+
+.topbar{
+  background:var(--card);border-bottom:1px solid var(--border);
+  padding:0 24px;height:64px;display:flex;align-items:center;
+  justify-content:space-between;position:sticky;top:0;z-index:50;
+}
+.page-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.btn-preview{
+  display:flex;align-items:center;gap:6px;
+  background:var(--accent);color:#fff;border:none;
+  padding:8px 16px;border-radius:8px;font-family:'Sora',sans-serif;
+  font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;
+}
+.btn-preview:hover{background:var(--accent2);}
+
+.content{padding:24px;}
+
+/* ===== SECTION PANELS ===== */
+.section-panel{display:none;}
+.section-panel.active{display:block;}
+
+/* ===== DASHBOARD HOME ===== */
+.stats-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:16px;margin-bottom:24px;
+}
+.stat-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:20px;
+  transition:transform 0.2s;
+}
+.stat-card:hover{transform:translateY(-2px);}
+.stat-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;margin-bottom:12px;
+}
+.stat-num{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);}
+.stat-label{font-size:12px;color:var(--muted);margin-top:2px;}
+
+.profile-complete{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:20px;margin-bottom:24px;
+}
+.complete-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.complete-title{font-size:14px;font-weight:600;}
+.complete-pct{font-size:14px;font-weight:700;color:var(--accent);}
+.progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;transition:width 0.5s;}
+.complete-tips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.tip-chip{
+  font-size:11px;padding:4px 10px;border-radius:20px;
+  border:1px solid var(--border);color:var(--muted);
+  cursor:pointer;transition:all 0.2s;
+}
+.tip-chip.done{background:#f0fdf4;border-color:#86efac;color:#16a34a;}
+.tip-chip:hover:not(.done){border-color:var(--accent);color:var(--accent);}
+
+/* ===== FORM STYLES ===== */
+.form-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:24px;margin-bottom:16px;
+}
+.form-card-title{
+  font-size:15px;font-weight:700;color:var(--text);
+  margin-bottom:4px;display:flex;align-items:center;gap:8px;
+}
+.form-card-sub{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.form-full{grid-column:1/-1;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-label{font-size:12px;font-weight:600;color:var(--text);}
+.form-label span{color:var(--danger);}
+.form-input,.form-textarea,.form-select{
+  padding:10px 14px;border:1.5px solid var(--border);
+  border-radius:10px;font-family:'Sora',sans-serif;
+  font-size:13px;color:var(--text);background:var(--bg);
+  transition:border-color 0.2s;outline:none;
+}
+.form-input:focus,.form-textarea:focus,.form-select:focus{
+  border-color:var(--accent);background:#fff;
+}
+.form-textarea{resize:vertical;min-height:90px;line-height:1.6;}
+.form-hint{font-size:11px;color:var(--muted);}
+
+/* Photo upload */
+.photo-upload-area{
+  border:2px dashed var(--border);border-radius:12px;
+  padding:32px;text-align:center;cursor:pointer;
+  transition:all 0.2s;background:var(--bg);
+  position:relative;overflow:hidden;
+}
+.photo-upload-area:hover{border-color:var(--accent);background:#eef2ff;}
+.photo-upload-area input[type=file]{
+  position:absolute;inset:0;opacity:0;cursor:pointer;
+}
+.upload-icon{font-size:32px;margin-bottom:8px;}
+.upload-text{font-size:13px;font-weight:600;color:var(--text);}
+.upload-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+.photo-preview{
+  width:100px;height:100px;border-radius:50%;
+  object-fit:cover;border:3px solid var(--accent);
+  display:block;margin:0 auto 12px;
+}
+
+/* Education tabs */
+.edu-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.edu-tab{
+  padding:7px 16px;border-radius:20px;font-size:12px;
+  font-weight:600;border:1.5px solid var(--border);
+  background:white;color:var(--muted);cursor:pointer;
+  transition:all 0.2s;
+}
+.edu-tab.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+
+/* Cert / Experience cards */
+.item-list{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+.item-card{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:12px;padding:14px 16px;
+  display:flex;justify-content:space-between;align-items:flex-start;
+}
+.item-info{}
+.item-title{font-size:13px;font-weight:700;color:var(--text);}
+.item-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.item-actions{display:flex;gap:6px;flex-shrink:0;}
+.btn-icon{
+  width:30px;height:30px;border-radius:8px;border:1px solid var(--border);
+  background:white;cursor:pointer;font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;
+}
+.btn-icon.danger:hover{background:#fef2f2;border-color:#fca5a5;}
+
+/* Gallery grid */
+.gallery-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:12px;margin-bottom:16px;
+}
+.gallery-item{
+  aspect-ratio:1;border-radius:10px;overflow:hidden;
+  position:relative;background:var(--border);
+}
+.gallery-item img{width:100%;height:100%;object-fit:cover;}
+.gallery-item-overlay{
+  position:absolute;inset:0;background:rgba(0,0,0,0.5);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity 0.2s;
+}
+.gallery-item:hover .gallery-item-overlay{opacity:1;}
+
+/* Resume templates */
+
+.template-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:16px;margin-bottom:16px;
+}
+.template-card{
+  border:2px solid var(--border);border-radius:12px;
+  overflow:hidden;cursor:pointer;transition:all 0.2s;
+}
+.template-card:hover,.template-card.selected{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(99,102,241,0.15);
+}
+.template-preview{
+  height:160px;display:flex;align-items:center;
+  justify-content:center;font-size:40px;
+}
+.t1{background:linear-gradient(135deg,#1e293b,#0f172a);}
+.t2{background:linear-gradient(135deg,#065f46,#064e3b);}
+.t3{background:linear-gradient(135deg,#1e1b4b,#312e81);}
+.t4{background:linear-gradient(135deg,#7c2d12,#431407);}
+.template-info{padding:12px;border-top:1px solid var(--border);}
+.template-name{font-size:13px;font-weight:700;}
+.template-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* Messages */
+.message-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:12px;padding:16px;margin-bottom:10px;
+  cursor:pointer;transition:all 0.2s;
+}
+.message-card:hover{border-color:var(--accent);}
+.message-card.unread{border-left:3px solid var(--accent);}
+.msg-header{display:flex;justify-content:space-between;align-items:flex-start;}
+.msg-sender{font-size:13px;font-weight:700;}
+.msg-time{font-size:11px;color:var(--muted);}
+.msg-subject{font-size:12px;color:var(--accent);margin-top:3px;font-weight:600;}
+.msg-preview{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5;}
+.msg-unread-dot{
+  width:8px;height:8px;background:var(--accent);
+  border-radius:50%;flex-shrink:0;margin-top:4px;
+}
+
+/* Buttons */
+.btn-primary{
+  background:var(--accent);color:#fff;border:none;
+  padding:10px 20px;border-radius:10px;
+  font-family:'Sora',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all 0.2s;display:inline-flex;
+  align-items:center;gap:6px;
+}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px);}
+.btn-secondary{
+  background:white;color:var(--text);
+  border:1.5px solid var(--border);
+  padding:10px 20px;border-radius:10px;
+  font-family:'Sora',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all 0.2s;
+}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+.btn-danger{
+  background:#fef2f2;color:var(--danger);
+  border:1px solid #fca5a5;padding:8px 14px;
+  border-radius:8px;font-family:'Sora',sans-serif;
+  font-size:12px;font-weight:600;cursor:pointer;
+}
+
+/* Toast notification */
+.toast{
+  position:fixed;bottom:24px;right:24px;
+  background:#1e293b;color:#fff;
+  padding:12px 20px;border-radius:12px;
+  font-size:13px;font-weight:500;
+  transform:translateY(100px);opacity:0;
+  transition:all 0.3s;z-index:9999;
+  display:flex;align-items:center;gap:8px;
+}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-left:4px solid var(--success);}
+.toast.error{border-left:4px solid var(--danger);}
+
+/* Loading spinner */
+.spinner{
+  width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin 0.7s linear infinite;display:inline-block;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Mobile toggle */
+.menu-toggle{
+  display:none;background:none;border:none;
+  font-size:22px;cursor:pointer;color:var(--text);
+}
+
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;}
+  .menu-toggle{display:block;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);}
+  .form-grid,.form-grid-3{grid-template-columns:1fr;}
+  .gallery-grid{grid-template-columns:repeat(3,1fr);}
+  .template-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+	
+	
+	
+
+<!-- ===== SIDEBAR ===== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🎓</div>
+    <div>
+      <div class="logo-text">StudentTap</div>
+      <div class="logo-sub">NFC Portfolio</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-section-title">Main</div>
+      <button class="nav-item active" onclick="showSection('dashboard')">
+        <span class="icon">📊</span> Dashboard
+      </button>
+      <button class="nav-item" onclick="showSection('profile')">
+        <span class="icon">👤</span> My Profile
+      </button>
+      <button class="nav-item" onclick="showSection('personal')">
+        <span class="icon">📋</span> Personal Details
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Academic</div>
+      <button class="nav-item" onclick="showSection('education')">
+        <span class="icon">🎓</span> Education
+      </button>
+      <button class="nav-item" onclick="showSection('certifications')">
+        <span class="icon">🏅</span> Certifications
+      </button>
+      <button class="nav-item" onclick="showSection('experience')">
+        <span class="icon">💼</span> Work Experience
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Portfolio</div>
+      <button class="nav-item" onclick="showSection('gallery')">
+        <span class="icon">🖼️</span> Photo Gallery
+      </button>
+      <button class="nav-item" onclick="showSection('resume')">
+        <span class="icon">📄</span> Resume
+      </button>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-title">Inbox</div>
+      <button class="nav-item" onclick="showSection('messages')">
+        <span class="icon">✉️</span> Messages
+        <span class="nav-badge" id="unread-badge" style="display:none">0</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="student-info">
+      <div class="student-avatar" id="sidebar-avatar">A</div>
+      <div>
+        <div class="student-name" id="sidebar-name">Loading...</div>
+        <div class="student-email" id="sidebar-email">...</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="logout()">🚪 Logout</button>
+  </div>
+</aside>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+  <!-- Topbar -->
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+      <h1 class="page-title" id="page-title">Dashboard</h1>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-preview" onclick="previewPortfolio()">
+        👁️ Preview My Portfolio
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ===== DASHBOARD HOME ===== -->
+    <div class="section-panel active" id="section-dashboard">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#eef2ff;">🎓</div>
+          <div class="stat-num" id="stat-edu">0</div>
+          <div class="stat-label">Education Records</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f0fdf4;">🏅</div>
+          <div class="stat-num" id="stat-cert">0</div>
+          <div class="stat-label">Certifications</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fff7ed;">🖼️</div>
+          <div class="stat-num" id="stat-gallery">0</div>
+          <div class="stat-label">Gallery Photos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fdf4ff;">✉️</div>
+          <div class="stat-num" id="stat-messages">0</div>
+          <div class="stat-label">Messages</div>
+        </div>
+      </div>
+
+      <div class="profile-complete">
+        <div class="complete-header">
+          <div class="complete-title">Profile Completion</div>
+          <div class="complete-pct" id="complete-pct">0%</div>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+        <div class="complete-tips">
+          <span class="tip-chip" id="tip-photo" onclick="showSection('profile')">📷 Add Photo</span>
+          <span class="tip-chip" id="tip-bio" onclick="showSection('profile')">✍️ Add Bio</span>
+          <span class="tip-chip" id="tip-edu" onclick="showSection('education')">🎓 Add Education</span>
+          <span class="tip-chip" id="tip-cert" onclick="showSection('certifications')">🏅 Add Certification</span>
+          <span class="tip-chip" id="tip-gallery" onclick="showSection('gallery')">🖼️ Add Gallery Photo</span>
+          <span class="tip-chip" id="tip-resume" onclick="showSection('resume')">📄 Upload Resume</span>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-title">🔗 Your NFC Portfolio Link</div>
+        <div class="form-card-sub">Share this link or program it into your NFC card</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input class="form-input" id="portfolio-link"
+            readonly style="flex:1;background:#f8fafc;cursor:pointer;"/>
+          <button class="btn-primary" onclick="copyLink()">📋 Copy Link</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PROFILE SECTION ===== -->
+    <div class="section-panel" id="section-profile">
+      <!-- Cover Photo -->
+      <div class="form-card">
+        <div class="form-card-title">🖼️ Cover Photo</div>
+        <div class="form-card-sub">This appears as the banner at the top of your portfolio</div>
+        <div class="photo-upload-area" id="cover-upload-area">
+          <input type="file" accept="image/*" onchange="uploadCover(this)"/>
+          <div class="upload-icon">🏔️</div>
+          <div class="upload-text">Click to upload cover photo</div>
+          <div class="upload-sub">Recommended: 1200x400px, JPG or PNG</div>
+        </div>
+      </div>
+
+      <!-- Profile Photo -->
+      <div class="form-card">
+        <div class="form-card-title">📷 Profile Photo</div>
+        <div class="form-card-sub">Your photo shown on the portfolio page</div>
+        <div style="text-align:center;margin-bottom:16px;">
+          <img id="profile-photo-preview"
+            src="https://via.placeholder.com/100"
+            class="photo-preview" alt="Profile"/>
+        </div>
+        <div class="photo-upload-area">
+          <input type="file" accept="image/*" onchange="uploadProfilePhoto(this)"/>
+          <div class="upload-icon">📷</div>
+          <div class="upload-text">Click to upload profile photo</div>
+          <div class="upload-sub">Square image works best, JPG or PNG</div>
+        </div>
+      </div>
+
+      <!-- Basic Info -->
+      <div class="form-card">
+        <div class="form-card-title">👤 Basic Information</div>
+        <div class="form-card-sub">This information is shown publicly on your portfolio</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Full Name <span>*</span></label>
+            <input class="form-input" id="fullName" placeholder="e.g. Arjun Sharma"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Designation</label>
+            <input class="form-input" id="designation" placeholder="e.g. Java Developer | Fresher"/>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">About Me / Bio</label>
+            <textarea class="form-textarea" id="bio" placeholder="Write a short description about yourself, your skills, and your career goals..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Candidate Type</label>
+            <select class="form-select" id="isFresher">
+              <option value="true">Fresher</option>
+              <option value="false">Experienced</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn-primary" style="margin-top:16px;" onclick="saveProfile()">
+          💾 Save Basic Info
+        </button>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="form-card">
+        <div class="form-card-title">📞 Contact Details</div>
+        <div class="form-card-sub">Visitors can contact you directly from these buttons</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input class="form-input" id="phone" placeholder="+91 98765 43210"/>
+            <span class="form-hint">📱 Clicking this will open phone dialer</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Alternate Phone</label>
+            <input class="form-input" id="alternatePhone" placeholder="+91 91234 56789"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Public Email</label>
+            <input class="form-input" id="emailPublic" placeholder="your@email.com"/>
+            <span class="form-hint">✉️ Clicking this will open Gmail</span>
+          </div>
+          <div class="form-group">
+            <label class="form-label">LinkedIn URL</label>
+            <input class="form-input" id="linkedinUrl" placeholder="https://linkedin.com/in/yourname"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">GitHub URL</label>
+            <input class="form-input" id="githubUrl" placeholder="https://github.com/yourname"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Website URL</label>
+            <input class="form-input" id="websiteUrl" placeholder="https://yourwebsite.com"/>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Address</label>
+            <input class="form-input" id="address" placeholder="e.g. Hyderabad, Telangana, India"/>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Google Maps Link</label>
+            <input class="form-input" id="googleMapsLink" placeholder="Paste Google Maps link here"/>
+            <span class="form-hint">📍 Go to Google Maps → search your address → Share → Copy link</span>
+          </div>
+        </div>
+        <button class="btn-primary" style="margin-top:16px;" onclick="saveContact()">
+          💾 Save Contact Details
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== PERSONAL DETAILS ===== -->
+    <div class="section-panel" id="section-personal">
+      <div class="form-card">
+        <div class="form-card-title">📋 Personal Details</div>
+        <div class="form-card-sub">Additional personal information for your portfolio</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Date of Birth</label>
+            <input class="form-input" type="date" id="dateOfBirth"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gender</label>
+            <select class="form-select" id="gender">
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nationality</label>
+            <input class="form-input" id="nationality" value="Indian"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Total Experience</label>
+            <input class="form-input" id="totalExperience" placeholder="e.g. 2 years 3 months (for experienced)"/>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Languages Known</label>
+            <input class="form-input" id="languagesKnown" placeholder="e.g. Telugu, Hindi, English"/>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Technical Skills</label>
+            <input class="form-input" id="skills" placeholder="e.g. Java, Spring Boot, MySQL, HTML, CSS"/>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Hobbies & Interests</label>
+            <input class="form-input" id="hobbies" placeholder="e.g. Reading, Coding, Cricket"/>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Career Objective</label>
+            <textarea class="form-textarea" id="careerObjective" placeholder="Write your career objective here..."></textarea>
+          </div>
+        </div>
+        <button class="btn-primary" style="margin-top:16px;" onclick="savePersonalDetails()">
+          💾 Save Personal Details
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== EDUCATION ===== -->
+    <div class="section-panel" id="section-education">
+      <div class="form-card">
+        <div class="form-card-title">🎓 Education Details</div>
+        <div class="form-card-sub">Click a tab to add or update that education level</div>
+
+        <div class="edu-tabs">
+          <button class="edu-tab active" onclick="selectEduTab(this,'10TH')">10th</button>
+          <button class="edu-tab" onclick="selectEduTab(this,'INTERMEDIATE')">Intermediate</button>
+          <button class="edu-tab" onclick="selectEduTab(this,'DEGREE')">Degree</button>
+          <button class="edu-tab" onclick="selectEduTab(this,'PG')">PG</button>
+          <button class="edu-tab" onclick="selectEduTab(this,'DIPLOMA')">Diploma</button>
+        </div>
+
+        <input type="hidden" id="eduType" value="10TH"/>
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label class="form-label">Institution Name <span>*</span></label>
+            <input class="form-input" id="institutionName" placeholder="e.g. ZP High School, Hyderabad"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Board / University</label>
+            <input class="form-input" id="boardUniversity" placeholder="e.g. CBSE, Osmania University"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Field of Study</label>
+            <input class="form-input" id="fieldOfStudy" placeholder="e.g. MPC, Computer Science"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Percentage / CGPA</label>
+            <input class="form-input" id="percentageCgpa" placeholder="e.g. 89% or 7.8 CGPA"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Year of Passing</label>
+            <input class="form-input" id="yearOfPassing" placeholder="e.g. 2022"/>
+          </div>
+        </div>
+        <button class="btn-primary" style="margin-top:16px;" onclick="saveEducation()">
+          💾 Save Education
+        </button>
+      </div>
+
+      <!-- Saved education list -->
+      <div class="form-card">
+        <div class="form-card-title">📚 Saved Education Records</div>
+        <div class="item-list" id="education-list">
+          <div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;">
+            No education records yet. Add above!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== CERTIFICATIONS ===== -->
+    <div class="section-panel" id="section-certifications">
+      <div class="form-card">
+        <div class="form-card-title">🏅 Add Certification</div>
+        <div class="form-card-sub">Add your course completions and certificates</div>
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <label class="form-label">Course Name <span>*</span></label>
+            <input class="form-input" id="courseName" placeholder="e.g. Java SE 17 Developer"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Issuing Organization</label>
+            <input class="form-input" id="issuingOrg" placeholder="e.g. Oracle, Udemy, Coursera"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Issue Date</label>
+            <input class="form-input" id="issueDate" placeholder="e.g. March 2024"/>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Credential URL</label>
+            <input class="form-input" id="credentialUrl" placeholder="https://credential-link.com"/>
+          </div>
+        </div>
+        <button class="btn-primary" style="margin-top:16px;" onclick="addCertification()">
+          ➕ Add Certification
+        </button>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-title">🏅 My Certifications</div>
+        <div class="item-list" id="cert-list">
+          <div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;">
+            No certifications yet. Add above!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== WORK EXPERIENCE ===== -->
+    <div class="section-panel" id="section-experience">
+      <div class="form-card">
+        <div class="form-card-title">💼 Add Work Experience</div>
+        <div class="form-card-sub">For experienced candidates — add your job history</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Company Name <span>*</span></label>
+            <input class="form-input" id="companyName" placeholder="e.g. TechSolutions Pvt Ltd"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Job Title <span>*</span></label>
+            <input class="form-input" id="jobTitle" placeholder="e.g. Java Developer"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Location</label>
+            <input class="form-input" id="jobLocation" placeholder="e.g. Hyderabad"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Start Date</label>
+            <input class="form-input" id="expStartDate" placeholder="e.g. June 2022"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">End Date</label>
+            <input class="form-input" id="expEndDate" placeholder="e.g. Present or Dec 2023"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Currently Working Here?</label>
+            <select class="form-select" id="isCurrent">
+              <option value="false">No</option>
+              <option value="true">Yes</option>
+            </select>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Description / Responsibilities</label>
+            <textarea class="form-textarea" id="expDescription" placeholder="Describe your role and achievements..."></textarea>
+          </div>
+        </div>
+        <button class="btn-primary" style="margin-top:16px;" onclick="addExperience()">
+          ➕ Add Experience
+        </button>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-title">💼 My Work Experience</div>
+        <div class="item-list" id="exp-list">
+          <div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;">
+            No experience added yet.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GALLERY ===== -->
+    <div class="section-panel" id="section-gallery">
+      <div class="form-card">
+        <div class="form-card-title">🖼️ Upload Photo</div>
+        <div class="form-card-sub">Add photos to your portfolio gallery (max 20 photos)</div>
+        <div class="form-grid">
+          <div class="form-group form-full">
+            <div class="photo-upload-area" id="gallery-upload-area">
+              <input type="file" accept="image/*" id="gallery-file-input" onchange="uploadGalleryPhoto(this)"/>
+              <div class="upload-icon">🖼️</div>
+              <div class="upload-text">Click to select photo</div>
+              <div class="upload-sub">JPG, PNG supported</div>
+            </div>
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">Caption (optional)</label>
+            <input class="form-input" id="photoCaption" placeholder="e.g. Hackathon 2024, Project Demo"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-title">🖼️ My Gallery</div>
+        <div class="gallery-grid" id="gallery-grid">
+          <div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;grid-column:1/-1;">
+            No photos yet. Upload above!
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RESUME ===== -->
+  <!--
+	  <div class="section-panel" id="section-resume">
+      <div class="form-card">
+        <div class="form-card-title">📄 Choose Resume Template</div>
+        <div class="form-card-sub">Select a template — visitors can download your resume</div>
+        <div class="template-grid">
+          <div class="template-card" onclick="selectTemplate('TEMPLATE_1',this)">
+            <div class="template-preview t1">📄</div>
+            <div class="template-info">
+              <div class="template-name">Template 1 — Classic Dark</div>
+              <div class="template-desc">Professional dark theme, ideal for tech roles</div>
+            </div>
+          </div>
+          <div class="template-card" onclick="selectTemplate('TEMPLATE_2',this)">
+            <div class="template-preview t2">📋</div>
+            <div class="template-info">
+              <div class="template-name">Template 2 — Modern Green</div>
+              <div class="template-desc">Clean and modern, great for freshers</div>
+            </div>
+          </div>
+          <div class="template-card" onclick="selectTemplate('TEMPLATE_3',this)">
+            <div class="template-preview t3">📝</div>
+            <div class="template-info">
+              <div class="template-name">Template 3 — Elegant Purple</div>
+              <div class="template-desc">Elegant design for experienced candidates</div>
+            </div>
+          </div>
+          <div class="template-card" onclick="selectTemplate('TEMPLATE_4',this)">
+            <div class="template-preview t4">🗒️</div>
+            <div class="template-info">
+              <div class="template-name">Template 4 — Bold Red</div>
+              <div class="template-desc">Bold and eye-catching design</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-title">📤 Or Upload Your Own Resume</div>
+        <div class="form-card-sub">Upload your existing resume PDF file</div>
+        <div class="photo-upload-area">
+          <input type="file" accept=".pdf" onchange="uploadResume(this)"/>
+          <div class="upload-icon">📄</div>
+          <div class="upload-text">Click to upload Resume PDF</div>
+          <div class="upload-sub">Only PDF files accepted, max 10MB</div>
+        </div>
+        <div id="resume-status" style="margin-top:12px;font-size:13px;color:var(--muted);"></div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-card-title">⚙️ Download Settings</div>
+        <div class="form-card-sub">Control whether visitors can download your resume</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:13px;font-weight:600;">Allow visitors to download resume</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;">When enabled, a download button appears on your portfolio</div>
+          </div>
+          <button class="btn-primary" onclick="toggleDownload()" id="toggle-download-btn">
+            ✅ Enabled
+          </button>
+        </div>
+      </div>
+    </div>
+-->
+
+
+<div class="form-card">
+  <div class="form-card-title">📋 Step 1 — Choose Resume Template</div>
+  <div class="form-card-sub">
+    🎓 Templates 1 & 2 are for Freshers &nbsp;|&nbsp;
+    💼 Templates 3 & 4 are for Experienced candidates
+  </div>
+ 
+  <!-- Fresher Templates -->
+  <div style="margin-bottom:8px;font-size:12px;font-weight:700;
+    color:#16a34a;margin-top:12px;">🎓 For Freshers</div>
+  <div class="template-grid">
+    <div class="template-card" data-template="TEMPLATE_1"
+      onclick="selectTemplate('TEMPLATE_1',this)">
+      <div class="template-preview t1">📄</div>
+      <div class="template-info">
+        <div class="template-name">Template 1 — Classic Dark</div>
+        <div class="template-desc">
+          Dark sidebar, professional look
+        </div>
+      </div>
+    </div>
+    <div class="template-card" data-template="TEMPLATE_2"
+      onclick="selectTemplate('TEMPLATE_2',this)">
+      <div class="template-preview t2">📋</div>
+      <div class="template-info">
+        <div class="template-name">Template 2 — Modern Green</div>
+        <div class="template-desc">
+          Clean two-column layout
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+  
+  <!-- Experienced Templates -->
+    <div style="margin-bottom:8px;font-size:12px;font-weight:700;
+      color:#7c3aed;margin-top:16px;">💼 For Experienced</div>
+    <div class="template-grid">
+      <div class="template-card" data-template="TEMPLATE_3"
+        onclick="selectTemplate('TEMPLATE_3',this)">
+        <div class="template-preview t3">📝</div>
+        <div class="template-info">
+          <div class="template-name">Template 3 — Elegant Purple</div>
+          <div class="template-desc">
+            Elegant dark sidebar, purple theme
+          </div>
+        </div>
+      </div>
+      <div class="template-card" data-template="TEMPLATE_4"
+        onclick="selectTemplate('TEMPLATE_4',this)">
+        <div class="template-preview t4">🗒️</div>
+        <div class="template-info">
+          <div class="template-name">Template 4 — Bold Red</div>
+          <div class="template-desc">
+            Bold two-column, red accents
+          </div>
+        </div>
+      </div>
+	  
+	  
+	  <!-- Preview Link (ADD HERE) -->
+	 <!--	  <div style="margin-top:12px;">
+	  	    <a id="resume-preview-link"
+	  	       target="_blank"
+	  	       style="display:none;
+	  	              color:#2563eb;
+	  	              font-size:13px;
+	  	              font-weight:600;">
+	  	      🔍 Preview Selected Resume
+	  	    </a>
+	  	  </div>-->
+		  
+		  
+		  <div style="margin-top:16px;">
+		      <button class="btn-primary"
+		        id="preview-resume-btn"
+		        style="display:none;"
+		        onclick="previewTemplate()">
+		        👁️ Preview My Resume
+		      </button>
+		    </div> 
+	  
+	  
+	  
+    </div>
+	
+	
+	
+    <!-- ===== MESSAGES ===== -->
+    <div class="section-panel" id="section-messages">
+      <div class="form-card">
+        <div class="form-card-title">✉️ Messages from Visitors</div>
+        <div class="form-card-sub">People who contacted you from your portfolio page</div>
+        <div id="messages-list">
+          <div style="text-align:center;color:var(--muted);font-size:13px;padding:40px;">
+            No messages yet. Share your portfolio to get messages!
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</main>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:8080';
+let token = localStorage.getItem('token');
+let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+
+// ===== CHECK LOGIN =====
+if (!token) {
+  window.location.href = 'login.html';
+}
+
+// ===== INIT =====
+window.onload = function() {
+  loadDashboard();
+  document.getElementById('portfolio-link').value =
+    window.location.origin + '/index.html?u=' + currentUser.username;
+};
+
+// ===== API HELPER =====
+
+
+async function api(method, url, body = null, isFile = false) {
+
+  const opts = {
+    method,
+    headers: {
+      'Authorization': 'Bearer ' + localStorage.getItem("token") // ✅ FIX
+    }
+  };
+
+  if (body && !isFile) {
+    opts.headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(body);
+  }
+
+  if (isFile) opts.body = body;
+
+  const res = await fetch("http://localhost:8080" + url, opts);
+
+  if (!res.ok) {
+    console.error("Status:", res.status);
+    throw new Error("Request failed");
+  }
+
+  return res.json();
+}
+
+
+// ===== SHOW SECTION =====
+function showSection(name) {
+  document.querySelectorAll('.section-panel')
+    .forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item')
+    .forEach(n => n.classList.remove('active'));
+
+  document.getElementById('section-' + name)
+    .classList.add('active');
+
+  const titles = {
+    dashboard: 'Dashboard', profile: 'My Profile',
+    personal: 'Personal Details', education: 'Education',
+    certifications: 'Certifications', experience: 'Work Experience',
+    gallery: 'Photo Gallery', resume: 'Resume',
+    messages: 'Messages'
+  };
+  document.getElementById('page-title').textContent =
+    titles[name] || name;
+
+  // Load data for section
+  if (name === 'education') loadEducation();
+  if (name === 'certifications') loadCertifications();
+  if (name === 'experience') loadExperience();
+  if (name === 'gallery') loadGallery();
+  if (name === 'messages') loadMessages();
+  if (name === 'profile') loadProfile();
+}
+
+// ===== LOAD DASHBOARD =====
+async function loadDashboard() {
+  // Set user info in sidebar
+  document.getElementById('sidebar-name').textContent =
+    currentUser.fullName || currentUser.username || 'Student';
+  document.getElementById('sidebar-email').textContent =
+    currentUser.email || '';
+
+  // Load unread count
+  try {
+    const res = await api('GET',
+      '/api/student/messages/unread-count');
+    if (res.data > 0) {
+      document.getElementById('unread-badge').style.display = 'block';
+      document.getElementById('unread-badge').textContent = res.data;
+      document.getElementById('stat-messages').textContent = res.data;
+    }
+  } catch(e) {}
+
+  // Load education count
+  try {
+    const res = await api('GET', '/api/student/education');
+    if (res.data) {
+      document.getElementById('stat-edu').textContent =
+        res.data.length;
+    }
+  } catch(e) {}
+
+  // Load cert count
+  try {
+    const res = await api('GET', '/api/student/certifications');
+    if (res.data) {
+      document.getElementById('stat-cert').textContent =
+        res.data.length;
+    }
+  } catch(e) {}
+
+  // Load gallery count
+  try {
+    const res = await api('GET', '/api/student/gallery');
+    if (res.data) {
+      document.getElementById('stat-gallery').textContent =
+        res.data.length;
+    }
+  } catch(e) {}
+
+  updateProfileCompletion();
+}
+
+// ===== PROFILE COMPLETION =====
+function updateProfileCompletion() {
+  let done = 0;
+  const total = 6;
+  // Check based on what's in localStorage
+  if (currentUser.profilePhoto) {
+    done++;
+    document.getElementById('tip-photo').classList.add('done');
+    document.getElementById('tip-photo').textContent = '✅ Photo Added';
+  }
+  if (currentUser.bio) {
+    done++;
+    document.getElementById('tip-bio').classList.add('done');
+    document.getElementById('tip-bio').textContent = '✅ Bio Added';
+  }
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('complete-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+// ===== LOAD PROFILE =====
+async function loadProfile() {
+  try {
+    const res = await api('GET', '/api/student/profile');
+    if (res) {
+      document.getElementById('fullName').value =
+        res.fullName || '';
+      document.getElementById('designation').value =
+        res.designation || '';
+      document.getElementById('bio').value = res.bio || '';
+      document.getElementById('phone').value = res.phone || '';
+      document.getElementById('alternatePhone').value =
+        res.alternatePhone || '';
+      document.getElementById('emailPublic').value =
+        res.emailPublic || '';
+      document.getElementById('linkedinUrl').value =
+        res.linkedinUrl || '';
+      document.getElementById('githubUrl').value =
+        res.githubUrl || '';
+      document.getElementById('websiteUrl').value =
+        res.websiteUrl || '';
+      document.getElementById('address').value =
+        res.address || '';
+      document.getElementById('googleMapsLink').value =
+        res.googleMapsLink || '';
+      document.getElementById('isFresher').value =
+        res.isFresher ? 'true' : 'false';
+    }
+  } catch(e) { showToast('Could not load profile', 'error'); }
+}
+
+// ===== SAVE PROFILE =====
+async function saveProfile() {
+  const body = {
+    fullName: document.getElementById('fullName').value,
+    designation: document.getElementById('designation').value,
+    bio: document.getElementById('bio').value,
+    isFresher: document.getElementById('isFresher').value === 'true'
+  };
+  try {
+    const res = await api('PUT', '/api/student/profile', body);
+    if (res.success) showToast('Profile saved! ✅', 'success');
+    else showToast(res.message, 'error');
+  } catch(e) { showToast('Save failed', 'error'); }
+}
+
+async function saveContact() {
+  const body = {
+    phone: document.getElementById('phone').value,
+    alternatePhone: document.getElementById('alternatePhone').value,
+    emailPublic: document.getElementById('emailPublic').value,
+    linkedinUrl: document.getElementById('linkedinUrl').value,
+    githubUrl: document.getElementById('githubUrl').value,
+    websiteUrl: document.getElementById('websiteUrl').value,
+    address: document.getElementById('address').value,
+    googleMapsLink: document.getElementById('googleMapsLink').value
+  };
+  try {
+    const res = await api('PUT', '/api/student/profile', body);
+    if (res.success) showToast('Contact details saved! ✅', 'success');
+    else showToast(res.message, 'error');
+  } catch(e) { showToast('Save failed', 'error'); }
+}
+
+// ===== UPLOAD PROFILE PHOTO =====
+async function uploadProfilePhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    const res = await api('POST',
+      '/api/student/profile/photo', fd, true);
+    if (res.success) {
+      document.getElementById('profile-photo-preview').src =
+        API + res.data;
+      showToast('Profile photo updated! ✅', 'success');
+    } else showToast(res.message, 'error');
+  } catch(e) { showToast('Upload failed', 'error'); }
+}
+
+async function uploadCover(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    const res = await api('POST',
+      '/api/student/profile/cover', fd, true);
+    if (res.success) showToast('Cover photo updated! ✅', 'success');
+    else showToast(res.message, 'error');
+  } catch(e) { showToast('Upload failed', 'error'); }
+}
+
+// ===== PERSONAL DETAILS =====
+async function savePersonalDetails() {
+  const body = {
+    dateOfBirth: document.getElementById('dateOfBirth').value,
+    gender: document.getElementById('gender').value,
+    nationality: document.getElementById('nationality').value,
+    languagesKnown: document.getElementById('languagesKnown').value,
+    skills: document.getElementById('skills').value,
+    hobbies: document.getElementById('hobbies').value,
+    totalExperience: document.getElementById('totalExperience').value,
+    careerObjective: document.getElementById('careerObjective').value
+  };
+  try {
+    const res = await api('POST',
+      '/api/student/personal-details', body);
+    if (res.success) showToast('Personal details saved! ✅', 'success');
+    else showToast(res.message, 'error');
+  } catch(e) { showToast('Save failed', 'error'); }
+}
+
+// ===== EDUCATION =====
+function selectEduTab(btn, type) {
+  document.querySelectorAll('.edu-tab')
+    .forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('eduType').value = type;
+  // Clear fields
+  ['institutionName','boardUniversity','fieldOfStudy',
+   'percentageCgpa','yearOfPassing'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+}
+
+async function saveEducation() {
+  const body = {
+    educationType: document.getElementById('eduType').value,
+    institutionName: document.getElementById('institutionName').value,
+    boardUniversity: document.getElementById('boardUniversity').value,
+    fieldOfStudy: document.getElementById('fieldOfStudy').value,
+    percentageCgpa: document.getElementById('percentageCgpa').value,
+    yearOfPassing: document.getElementById('yearOfPassing').value
+  };
+  if (!body.institutionName) {
+    showToast('Institution name is required!', 'error');
+    return;
+  }
+  try {
+    const res = await api('POST', '/api/student/education', body);
+    if (res.success) {
+      showToast('Education saved! ✅', 'success');
+      loadEducation();
+    } else showToast(res.message, 'error');
+  } catch(e) { showToast('Save failed', 'error'); }
+}
+
+async function loadEducation() {
+  try {
+    const res = await api('GET', '/api/student/education');
+    const list = document.getElementById('education-list');
+    if (!res.data || res.data.length === 0) {
+      list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;">No education records yet.</div>';
+      return;
+    }
+    list.innerHTML = res.data.map(e => `
+      <div class="item-card">
+        <div class="item-info">
+          <div class="item-title">${e.educationType} — ${e.institutionName}</div>
+          <div class="item-sub">${e.boardUniversity||''} ${e.yearOfPassing ? '· ' + e.yearOfPassing : ''} ${e.percentageCgpa ? '· ' + e.percentageCgpa : ''}</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-icon danger" onclick="deleteEducation(${e.id})">🗑️</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function deleteEducation(id) {
+  if (!confirm('Delete this education record?')) return;
+  await api('DELETE', '/api/student/education/' + id);
+  showToast('Deleted! ✅', 'success');
+  loadEducation();
+}
+
+// ===== CERTIFICATIONS =====
+async function addCertification() {
+  const body = {
+    courseName: document.getElementById('courseName').value,
+    issuingOrg: document.getElementById('issuingOrg').value,
+    issueDate: document.getElementById('issueDate').value,
+    credentialUrl: document.getElementById('credentialUrl').value
+  };
+  if (!body.courseName) {
+    showToast('Course name is required!', 'error');
+    return;
+  }
+  try {
+    const res = await api('POST',
+      '/api/student/certifications', body);
+    if (res.success) {
+      showToast('Certification added! ✅', 'success');
+      ['courseName','issuingOrg','issueDate','credentialUrl']
+        .forEach(id => document.getElementById(id).value = '');
+      loadCertifications();
+    } else showToast(res.message, 'error');
+  } catch(e) { showToast('Failed', 'error'); }
+}
+
+async function loadCertifications() {
+  try {
+    const res = await api('GET', '/api/student/certifications');
+    const list = document.getElementById('cert-list');
+    if (!res.data || res.data.length === 0) {
+      list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;">No certifications yet.</div>';
+      return;
+    }
+    list.innerHTML = res.data.map(c => `
+      <div class="item-card">
+        <div class="item-info">
+          <div class="item-title">🏅 ${c.courseName}</div>
+          <div class="item-sub">${c.issuingOrg||''} ${c.issueDate ? '· ' + c.issueDate : ''}</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-icon danger" onclick="deleteCert(${c.id})">🗑️</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function deleteCert(id) {
+  if (!confirm('Delete this certification?')) return;
+  await api('DELETE', '/api/student/certifications/' + id);
+  showToast('Deleted! ✅', 'success');
+  loadCertifications();
+}
+
+// ===== WORK EXPERIENCE =====
+async function addExperience() {
+  const body = {
+    companyName: document.getElementById('companyName').value,
+    jobTitle: document.getElementById('jobTitle').value,
+    jobLocation: document.getElementById('jobLocation').value,
+    startDate: document.getElementById('expStartDate').value,
+    endDate: document.getElementById('expEndDate').value,
+    isCurrent: document.getElementById('isCurrent').value === 'true',
+    description: document.getElementById('expDescription').value
+  };
+  if (!body.companyName || !body.jobTitle) {
+    showToast('Company and job title are required!', 'error');
+    return;
+  }
+  try {
+    const res = await api('POST',
+      '/api/student/experience', body);
+    if (res.success) {
+      showToast('Experience added! ✅', 'success');
+      loadExperience();
+    } else showToast(res.message, 'error');
+  } catch(e) { showToast('Failed', 'error'); }
+}
+
+async function loadExperience() {
+  try {
+    const res = await api('GET', '/api/student/experience');
+    const list = document.getElementById('exp-list');
+    if (!res.data || res.data.length === 0) {
+      list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;">No experience added yet.</div>';
+      return;
+    }
+    list.innerHTML = res.data.map(e => `
+      <div class="item-card">
+        <div class="item-info">
+          <div class="item-title">💼 ${e.jobTitle} @ ${e.companyName}</div>
+          <div class="item-sub">${e.jobLocation||''} · ${e.startDate||''} – ${e.isCurrent ? 'Present' : (e.endDate||'')}</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-icon danger" onclick="deleteExp(${e.id})">🗑️</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function deleteExp(id) {
+  if (!confirm('Delete this experience?')) return;
+  await api('DELETE', '/api/student/experience/' + id);
+  showToast('Deleted! ✅', 'success');
+  loadExperience();
+}
+
+// ===== GALLERY =====
+async function uploadGalleryPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const caption = document.getElementById('photoCaption').value;
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('caption', caption);
+  try {
+    const res = await api('POST',
+      '/api/student/gallery', fd, true);
+    if (res.success) {
+      showToast('Photo uploaded! ✅', 'success');
+      document.getElementById('photoCaption').value = '';
+      loadGallery();
+    } else showToast(res.message, 'error');
+  } catch(e) { showToast('Upload failed', 'error'); }
+}
+
+async function loadGallery() {
+  try {
+    const res = await api('GET', '/api/student/gallery');
+    const grid = document.getElementById('gallery-grid');
+    if (!res.data || res.data.length === 0) {
+      grid.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;grid-column:1/-1;">No photos yet.</div>';
+      return;
+    }
+    grid.innerHTML = res.data.map(p => `
+      <div class="gallery-item">
+        <img src="${API}/uploads/gallery/${p.photoPath}" alt="${p.caption||''}"/>
+        <div class="gallery-item-overlay">
+          <button class="btn-icon danger" onclick="deletePhoto(${p.id})" style="background:rgba(255,255,255,0.9)">🗑️</button>
+        </div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function deletePhoto(id) {
+  if (!confirm('Delete this photo?')) return;
+  await api('DELETE', '/api/student/gallery/' + id);
+  showToast('Deleted! ✅', 'success');
+  loadGallery();
+}
+
+// ===== RESUME =====
+/*async function selectTemplate(name, card) {
+  document.querySelectorAll('.template-card')
+    .forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  try {
+    const res = await api('POST',
+      '/api/student/resume/template?templateName=' + name);
+    if (res.success)
+      showToast(name + ' selected! ✅', 'success');
+    else showToast(res.message, 'error');
+  } catch(e) { showToast('Failed', 'error'); }
+}*/
+
+async function uploadResume(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('template', 'CUSTOM');
+  try {
+    const res = await api('POST',
+      '/api/student/resume/upload', fd, true);
+    if (res.success) {
+      document.getElementById('resume-status').textContent =
+        '✅ Resume uploaded: ' + file.name;
+      showToast('Resume uploaded! ✅', 'success');
+    } else showToast(res.message, 'error');
+  } catch(e) { showToast('Upload failed', 'error'); }
+}
+
+/*async function selectTemplate(name, card) {
+  document.querySelectorAll('.template-card')
+    .forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+ 
+  try {
+   // const res = await api('POST',
+     // '/api/student/resume/template?templateName=' + name);
+	 
+	 const res= await api('POST',`/api/student/resume/template/?templateName=${name}& username=${user.username}`);
+    if (res.success) {
+      showToast(name + ' selected! ✅', 'success');
+ 
+      // Show preview link
+      const user = JSON.parse(
+        localStorage.getItem('user') || '{}');
+      const previewUrl =
+        `http://localhost:8080/api/public/resume-template/`
+        + user.username + '/' + name;
+ 
+      document.getElementById('resume-preview-link').href =
+        previewUrl;
+      document.getElementById('resume-preview-link')
+        .style.display = 'block';
+ 
+    } else {
+      showToast(res.message, 'error');
+    }
+  } catch(e) {
+	console.error("Template error",e);
+    showToast('Failed', 'error');
+  }
+}*/
+
+/*async function selectTemplate(name, card) {
+  document.querySelectorAll('.template-card')
+    .forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+
+  try {
+    const res = await api(
+      'POST',
+      `/api/student/resume/template?templateName=${name}`
+    );
+
+    console.log("API Response:", res);
+
+    if (res.success) {
+      showToast(name + ' selected! ✅', 'success');
+
+      const user = JSON.parse(
+        localStorage.getItem('user') || '{}');
+
+      const previewUrl =
+        `http://localhost:8080/api/public/resume-template/`
+        + user.username + '/' + name;
+
+      document.getElementById('resume-preview-link').href =
+        previewUrl;
+
+      document.getElementById('resume-preview-link')
+        .style.display = 'block';
+
+    } else {
+      showToast(res.message, 'error');
+    }
+
+  } catch(e) {
+    console.error("Template error:", e);
+    showToast('Failed', 'error');
+  }
+}
+*/
+
+
+/*
+async function selectTemplate(name, card) {
+  document.querySelectorAll('.template-card')
+    .forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+
+  try {
+    const res = await api(
+      'POST',
+      `/api/student/resume/template?templateName=${name}`
+    );
+
+    console.log("API Response:", res);
+
+    if (res.success) {
+      showToast(name + ' selected! ✅', 'success');
+
+      const user = JSON.parse(
+        localStorage.getItem('user') || '{}');
+
+      const previewUrl =
+        `http://localhost:8080/api/public/resume-template/`
+        + user.username;
+
+      // ✅ SAFE FIX
+      const link = document.getElementById('resume-preview-link');
+      if (link) {
+        link.href = previewUrl;
+        link.style.display = 'block';
+      }
+
+    } else {
+      showToast(res.message, 'error');
+    }
+
+  } catch(e) {
+    console.error("Template error:", e);
+    showToast('Failed', 'error');
+  }
+}
+
+
+
+
+
+
+function previewTemplate() {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const selected = document.querySelector(
+    '.template-card.selected');
+ 
+  if (!selected) {
+    showToast('Please select a template first!', 'error');
+    return;
+  }
+ 
+  const templateName = selected.getAttribute('data-template');
+  const url = `http://localhost:8080/api/public/resume-template/`
+    + user.username;
+  window.open(url, '_blank');
+}
+*/
+
+
+
+async function selectTemplate(name, card) {
+  // Highlight selected card
+  document.querySelectorAll('.template-card')
+    .forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+ 
+  // Show loading state
+  showToast('Selecting ' + name + '...', 'info');
+ 
+  try {
+    // ✅ Call API to save template selection
+    const res = await api(
+      'POST',
+      '/api/student/resume/template?templateName=' + name
+    );
+ 
+    if (res && res.success) {
+      window._selectedTemplate = name;
+      showToast('✅ ' + name + ' selected! Resume updated.', 'success');
+ 
+      // Show preview button
+      document.getElementById('preview-resume-btn')
+        .style.display = 'inline-flex';
+ 
+    } else {
+      showToast(
+        (res && res.message) || 'Failed to select template',
+        'error'
+      );
+    }
+  } catch(e) {
+    console.error('selectTemplate error:', e);
+    showToast('Error: ' + e.message, 'error');
+  }
+}
+
+
+
+
+function previewTemplate() {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const username = user.username || user.email;
+  const template = window._selectedTemplate || 'TEMPLATE_1';
+ 
+  // Get correct API base URL
+  const apiBase = window.location.origin;
+  const url = apiBase
+    + '/api/public/resume-template/'
+    + username + '/' + template;
+ 
+  window.open(url, '_blank');
+}
+
+ 
+
+
+
+
+async function toggleDownload() {
+  try {
+    const res = await api('PUT',
+      '/api/student/resume/toggle-download');
+    if (res.success) {
+      showToast(res.message, 'success');
+      const btn = document.getElementById('toggle-download-btn');
+      const isEnabled = res.data && res.data.isDownloadable;
+      btn.textContent = isEnabled ? '✅ Enabled' : '❌ Disabled';
+    }
+  } catch(e) { showToast('Failed', 'error'); }
+}
+
+
+
+
+// ===== MESSAGES =====
+async function loadMessages() {
+  try {
+    const res = await api('GET', '/api/student/messages');
+    const list = document.getElementById('messages-list');
+    if (!res.data || res.data.length === 0) {
+      list.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:40px;">No messages yet.</div>';
+      return;
+    }
+    list.innerHTML = res.data.map(m => `
+      <div class="message-card ${!m.isRead ? 'unread' : ''}"
+           onclick="markRead(${m.id}, this)">
+        <div class="msg-header">
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${!m.isRead ? '<div class="msg-unread-dot"></div>' : ''}
+            <div class="msg-sender">${m.senderName}</div>
+          </div>
+          <div class="msg-time">${new Date(m.sentAt).toLocaleDateString()}</div>
+        </div>
+        <div class="msg-subject">${m.subject || 'No subject'}</div>
+        <div class="msg-preview">${m.message}</div>
+        <div style="margin-top:8px;font-size:11px;color:var(--muted);">
+          📧 ${m.senderEmail} ${m.senderPhone ? '· 📞 ' + m.senderPhone : ''}
+        </div>
+      </div>`).join('');
+  } catch(e) {}
+}
+
+async function markRead(id, el) {
+  el.classList.remove('unread');
+  el.querySelector('.msg-unread-dot') &&
+    el.querySelector('.msg-unread-dot').remove();
+  await api('PUT', '/api/student/messages/' + id + '/read');
+}
+
+// ===== UTILITIES =====
+function copyLink() {
+  const link = document.getElementById('portfolio-link').value;
+  navigator.clipboard.writeText(link);
+  showToast('Link copied! 📋', 'success');
+}
+
+function previewPortfolio() {
+  const username = currentUser.username;
+  window.open('/index.html?u=' + username, '_blank');
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  window.location.href = 'login.html';
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+function showToast(msg, type = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = 'toast ' + type + ' show';
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
