@@ -1007,7 +1007,7 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-he
 <div class="toast" id="toast"></div>
 
 <script>
-const API = 'http://localhost:8080';
+const API = '';
 let token = localStorage.getItem('token');
 let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -1042,7 +1042,7 @@ async function api(method, url, body = null, isFile = false) {
 
   if (isFile) opts.body = body;
 
-  const res = await fetch("http://localhost:8080" + url, opts);
+  const res = await fetch("" + url, opts);
 
   if (!res.ok) {
     console.error("Status:", res.status);
@@ -1525,7 +1525,7 @@ async function uploadResume(input) {
       const user = JSON.parse(
         localStorage.getItem('user') || '{}');
       const previewUrl =
-        `http://localhost:8080/api/public/resume-template/`
+        `/api/public/resume-template/`
         + user.username + '/' + name;
  
       document.getElementById('resume-preview-link').href =
@@ -1562,7 +1562,7 @@ async function uploadResume(input) {
         localStorage.getItem('user') || '{}');
 
       const previewUrl =
-        `http://localhost:8080/api/public/resume-template/`
+        `/api/public/resume-template/`
         + user.username + '/' + name;
 
       document.getElementById('resume-preview-link').href =
@@ -1604,7 +1604,7 @@ async function selectTemplate(name, card) {
         localStorage.getItem('user') || '{}');
 
       const previewUrl =
-        `http://localhost:8080/api/public/resume-template/`
+        `/api/public/resume-template/`
         + user.username;
 
       // ✅ SAFE FIX
@@ -1640,7 +1640,7 @@ function previewTemplate() {
   }
  
   const templateName = selected.getAttribute('data-template');
-  const url = `http://localhost:8080/api/public/resume-template/`
+  const url = `/api/public/resume-template/`
     + user.username;
   window.open(url, '_blank');
 }
