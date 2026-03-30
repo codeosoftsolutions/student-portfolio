@@ -1007,7 +1007,7 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-he
 <div class="toast" id="toast"></div>
 
 <script>
-const API = '';
+const API = 'window.location.origin';
 let token = localStorage.getItem('token');
 let currentUser = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -1042,9 +1042,13 @@ async function api(method, url, body = null, isFile = false) {
 
   if (isFile) opts.body = body;
 
-  const res = await fetch("" + url, opts);
+  const res = await fetch(API + url, opts);
 
   if (!res.ok) {
+	if(res.status==403){
+		localStorage.clear();
+		window.location.href='login.html'
+	}
     console.error("Status:", res.status);
     throw new Error("Request failed");
   }
