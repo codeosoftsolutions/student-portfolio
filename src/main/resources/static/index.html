@@ -296,9 +296,7 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);max-wi
 <div class="toast" id="toast"></div>
 
 <script>
-const API = window.location.origin.includes('localhost')
-  ? 'http://localhost:8080'
-  : window.location.origin;
+const API = window.location.origin;
 
 function getUsername() {
   const params = new URLSearchParams(window.location.search);
