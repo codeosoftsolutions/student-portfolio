@@ -43,7 +43,7 @@ public class QRCodeController {
 
         // Portfolio URL that QR code will open
         String portfolioUrl = baseUrl
-            + "/index.html?u=" + username;
+            + "/" + username;
 
         // Generate QR code
         QRCodeWriter qrWriter = new QRCodeWriter();
@@ -85,7 +85,7 @@ public class QRCodeController {
     @GetMapping("/qr/{username}/url")
     public ResponseEntity<String> getPortfolioUrl(
             @PathVariable String username) {
-        String url = baseUrl + "/index.html?u=" + username;
+        String url = baseUrl + "/" + username;
         return ResponseEntity.ok(url);
     }
 }
