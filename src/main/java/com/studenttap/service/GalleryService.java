@@ -2,7 +2,10 @@
 
 package com.studenttap.service;
  
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.studenttap.model.GalleryPhoto;
+
 import com.studenttap.model.Student;
 import com.studenttap.repository.GalleryRepository;
 import com.studenttap.repository.StudentRepository;
@@ -17,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
  
 @Service
@@ -27,6 +31,9 @@ public class GalleryService {
  
     @Autowired
     private StudentRepository studentRepository;
+    
+    @Autowired
+    private Cloudinary cloudinary;
  
     @Value("${app.upload.dir}")
     private String uploadDir;
@@ -37,7 +44,7 @@ public class GalleryService {
     // ===================================================
     // UPLOAD one photo to gallery
     // ===================================================
-    public GalleryPhoto uploadPhoto(
+   /* public GalleryPhoto uploadPhoto(
             String email,
             MultipartFile file,
             String caption) throws IOException {
@@ -82,6 +89,47 @@ public class GalleryService {
  
         return galleryRepository.save(photo);
     }
+    
+    */
+    
+    public GalleryPhoto uploadPhoto(
+            String email,
+            MultipartFile file,
+            String caption) throws IOException {
+
+        Student student = getStudent(email);
+
+        long count = galleryRepository
+            .countByStudentId(student.getId());
+
+        if (count >= MAX_PHOTOS) {
+            throw new RuntimeException(
+                "Maximum " + MAX_PHOTOS + " photos allowed!");
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new RuntimeException("Only image files are allowed!");
+        }
+
+        // ✅ UPLOAD TO CLOUDINARY
+        Map uploadResult = cloudinary.uploader().upload(
+            file.getBytes(),
+            ObjectUtils.emptyMap()
+        );
+
+        String imageUrl = uploadResult.get("secure_url").toString();
+
+        // ✅ SAVE FULL URL
+        GalleryPhoto photo = new GalleryPhoto();
+        photo.setStudent(student);
+        photo.setPhotoPath(imageUrl); // ✅ IMPORTANT FIX
+        photo.setCaption(caption);
+        photo.setDisplayOrder((int) count + 1);
+
+        return galleryRepository.save(photo);
+    }
+    
  
     // ===================================================
     // GET all gallery photos of student

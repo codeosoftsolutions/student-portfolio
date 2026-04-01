@@ -1220,7 +1220,8 @@ async function saveContact() {
 }
 
 // ===== UPLOAD PROFILE PHOTO =====
-async function uploadProfilePhoto(input) {
+
+/*async function uploadProfilePhoto(input) {
   const file = input.files[0];
   if (!file) return;
   const fd = new FormData();
@@ -1248,7 +1249,57 @@ async function uploadCover(input) {
     else showToast(res.message, 'error');
   } catch(e) { showToast('Upload failed', 'error'); }
 }
+*/
 
+async function uploadProfilePhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const fd = new FormData();
+  fd.append('file', file);
+
+  try {
+    const res = await api('POST',
+      '/api/student/profile/photo', fd, true);
+
+    if (res.success) {
+      document.getElementById('profile-photo-preview').src =
+        getImageUrl(res.data);   // ✅ FIXED
+
+      showToast('Profile photo updated! ✅', 'success');
+    } else {
+      showToast(res.message, 'error');
+    }
+
+  } catch(e) {
+    showToast('Upload failed', 'error');
+  }
+}
+
+async function uploadCover(input) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const fd = new FormData();
+  fd.append('file', file);
+
+  try {
+    const res = await api('POST',
+      '/api/student/profile/cover', fd, true);
+
+    if (res.success) {
+      // if you have preview element, update it
+      // document.getElementById('cover-preview').src = getImageUrl(res.data);
+
+      showToast('Cover photo updated! ✅', 'success');
+    } else {
+      showToast(res.message, 'error');
+    }
+
+  } catch(e) {
+    showToast('Upload failed', 'error');
+  }
+}
 // ===== PERSONAL DETAILS =====
 async function savePersonalDetails() {
   const body = {

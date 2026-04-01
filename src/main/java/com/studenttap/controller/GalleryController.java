@@ -33,8 +33,7 @@ public class GalleryController {
  
             return ResponseEntity.ok(
                 ApiResponse.success(
-                    "Photo uploaded to gallery!",
-                    "/uploads/gallery/"
+                    "Photo uploaded to gallery!"
                         + photo.getPhotoPath()));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
