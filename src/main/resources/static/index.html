@@ -401,9 +401,10 @@ async function loadPortfolio() {
   } catch(e){console.error(e);showNotFound();}
 }
 
+
 function renderProfile(data) {
   // ✅ Support both Cloudinary URLs and local paths
-  if (data.coverPhoto) {
+  /*if (data.coverPhoto) {
     document.getElementById('cover-img').src =
       data.coverPhoto.startsWith('http')
         ? data.coverPhoto
@@ -419,7 +420,27 @@ function renderProfile(data) {
   } else {
     document.getElementById('avatar-placeholder').textContent=
       (data.fullName||'S').charAt(0).toUpperCase();
-  }
+  }*/
+  
+  function renderProfile(data) {
+    // ✅ Cover photo
+    if (data.coverPhoto) {
+      document.getElementById('cover-img').src =
+        getImageUrl(data.coverPhoto, 'covers');
+    }
+    
+    // ✅ Profile photo  
+    if (data.profilePhoto) {
+      const img = document.getElementById('avatar-img');
+      img.src = getImageUrl(data.profilePhoto, 'profiles');
+      img.style.display = 'block';
+      document.getElementById('avatar-placeholder')
+        .style.display = 'none';
+    } else {
+      document.getElementById('avatar-placeholder')
+        .textContent =
+        (data.fullName || 'S').charAt(0).toUpperCase();
+    }
   document.getElementById('profile-name').textContent=data.fullName||username;
   document.getElementById('profile-title').textContent=data.designation||'';
   document.getElementById('profile-type').textContent=
@@ -529,11 +550,29 @@ async function loadExperience(uname){
 }
 
 // ✅ Smart image URL - works for Cloudinary AND local
-function getImageUrl(path, folder) {
+/*function getImageUrl(path, folder) {
   if (!path) return '';
   // Cloudinary URL - use directly
   if (path.startsWith('http://') || path.startsWith('https://')) return path;
   // Local path - add API prefix
+  return API + '/uploads/' + folder + '/' + path;
+}*/
+
+function getImageUrl(path, folder) {
+  if (!path) return '';
+  
+  // ✅ Already full URL - use directly
+  if (path.startsWith('http://') || 
+      path.startsWith('https://')) {
+    return path;
+  }
+  
+  // ✅ Path contains https inside - extract it
+  if (path.includes('https://')) {
+    return path.substring(path.indexOf('https://'));
+  }
+  
+  // ✅ Local path - add API prefix
   return API + '/uploads/' + folder + '/' + path;
 }
 
