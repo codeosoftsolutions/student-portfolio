@@ -558,23 +558,7 @@ async function loadExperience(uname){
   return API + '/uploads/' + folder + '/' + path;
 }*/
 
-function getImageUrl(path, folder) {
-  if (!path) return '';
-  
-  // ✅ Already full URL - use directly
-  if (path.startsWith('http://') || 
-      path.startsWith('https://')) {
-    return path;
-  }
-  
-  // ✅ Path contains https inside - extract it
-  if (path.includes('https://')) {
-    return path.substring(path.indexOf('https://'));
-  }
-  
-  // ✅ Local path - add API prefix
-  return API + '/uploads/' + folder + '/' + path;
-}
+
 
 async function loadGallery(uname){
   try{
@@ -686,9 +670,11 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 
+
 function showNotFound(){
   document.getElementById('loading').style.display='none';
   document.getElementById('not-found').style.display='block';
+}
 }
 </script>
 </body>
