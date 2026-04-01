@@ -1456,22 +1456,43 @@ async function uploadGalleryPhoto(input) {
   } catch(e) { showToast('Upload failed', 'error'); }
 }
 
+function getImageUrl(path) {
+  if (!path) return "";
+
+  // Cloudinary or external
+  if (path.startsWith("http")) {
+    return path;
+  }
+
+  // Local (old)
+  return API + "/uploads/gallery/" + path;
+}
+
 async function loadGallery() {
   try {
     const res = await api('GET', '/api/student/gallery');
     const grid = document.getElementById('gallery-grid');
+
     if (!res.data || res.data.length === 0) {
-      grid.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;grid-column:1/-1;">No photos yet.</div>';
+      grid.innerHTML = `
+        <div style="text-align:center;color:var(--muted);font-size:13px;padding:20px;grid-column:1/-1;">
+          No photos yet.
+        </div>`;
       return;
     }
+
     grid.innerHTML = res.data.map(p => `
       <div class="gallery-item">
-        <img src="${API}/uploads/gallery/${p.photoPath}" alt="${p.caption||''}"/>
+        <img src="${getImageUrl(p.photoPath)}" alt="${p.caption || ''}"/>
         <div class="gallery-item-overlay">
           <button class="btn-icon danger" onclick="deletePhoto(${p.id})" style="background:rgba(255,255,255,0.9)">🗑️</button>
         </div>
-      </div>`).join('');
-  } catch(e) {}
+      </div>
+    `).join('');
+
+  } catch(e) {
+    console.error(e);
+  }
 }
 
 async function deletePhoto(id) {

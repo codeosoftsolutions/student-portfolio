@@ -5,6 +5,7 @@
 package com.studenttap.model;
 
 import jakarta.persistence.*;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
