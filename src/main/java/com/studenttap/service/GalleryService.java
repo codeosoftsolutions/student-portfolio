@@ -1,5 +1,5 @@
 
-
+/*
 package com.studenttap.service;
  
 import com.studenttap.model.GalleryPhoto;
@@ -140,5 +140,115 @@ public class GalleryService {
             .orElseThrow(() ->
                 new RuntimeException("Student not found!"));
     }
+}*/
+
+
+package com.studenttap.service;
+
+import com.studenttap.model.GalleryPhoto;
+import com.studenttap.model.Student;
+import com.studenttap.repository.GalleryRepository;
+import com.studenttap.repository.StudentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+
+@Service
+public class GalleryService {
+
+    @Autowired
+    private GalleryRepository galleryRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
+    // ✅ Upload gallery photo to Cloudinary
+    public GalleryPhoto uploadPhoto(
+            String username,
+            MultipartFile file,
+            String caption) throws IOException {
+
+        Student student = studentRepository
+            .findByUsername(username)
+            .orElseThrow(() ->
+                new RuntimeException("Student not found"));
+
+        // Max 20 photos check
+        long count = galleryRepository
+            .countByStudentId(student.getId());
+        if (count >= 20) {
+            throw new RuntimeException(
+                "Maximum 20 photos allowed!");
+        }
+
+        // ✅ Upload to Cloudinary - permanent storage!
+        String photoUrl = cloudinaryService
+            .uploadPhoto(file, "gallery");
+
+        // Save Cloudinary URL to database
+        GalleryPhoto photo = new GalleryPhoto();
+        photo.setStudent(student);
+        photo.setPhotoPath(photoUrl); // Full Cloudinary URL
+        photo.setCaption(caption);
+
+        return galleryRepository.save(photo);
+    }
+
+    // Get gallery photos for a student
+    public List<GalleryPhoto> getGalleryByStudentId(
+            Long studentId) {
+        return galleryRepository
+            .findByStudentId(studentId);
+    }
+
+    // Delete gallery photo
+    public void deletePhoto(
+            String username, Long photoId) {
+
+        Student student = studentRepository
+            .findByUsername(username)
+            .orElseThrow(() ->
+                new RuntimeException("Student not found"));
+
+        GalleryPhoto photo = galleryRepository
+            .findById(photoId)
+            .orElseThrow(() ->
+                new RuntimeException("Photo not found"));
+
+        if (!photo.getStudent().getId()
+                .equals(student.getId())) {
+            throw new RuntimeException("Not authorized!");
+        }
+
+        // Delete from Cloudinary
+        String publicId = cloudinaryService
+            .getPublicIdFromUrl(photo.getPhotoPath());
+        if (publicId != null) {
+            cloudinaryService.deletePhoto(publicId);
+        }
+
+        galleryRepository.delete(photo);
+    }
+    
+    public List<GalleryPhoto> getGallery(String email) {
+        Student student = getStudent(email);
+        return galleryRepository
+            .findByStudentIdOrderByDisplayOrderAsc(
+                student.getId());
+    }
+
+    private Student getStudent(String email) {
+        return studentRepository.findByEmail(email)
+            .orElseThrow(() ->
+                new RuntimeException("Student not found!"));
+    }
 }
+
+	
  

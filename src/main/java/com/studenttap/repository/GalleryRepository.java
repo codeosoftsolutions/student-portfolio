@@ -21,4 +21,8 @@ public interface GalleryRepository
  
     // Delete by id and studentId (security check)
     void deleteByIdAndStudentId(Long id, Long studentId);
+
+	List<GalleryPhoto> findByStudentId(Long studentId);
+
+	
 }

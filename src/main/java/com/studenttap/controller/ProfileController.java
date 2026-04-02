@@ -261,6 +261,8 @@ public class ProfileController {
     // 🔒 PROTECTED API - Login required
     // PUT /api/student/profile
     // ===================================================
+   
+    /*
     @PutMapping("/api/student/profile")
     public ResponseEntity<?> updateProfile(
             Authentication authentication,
@@ -276,6 +278,28 @@ public class ProfileController {
                 .body(ApiResponse.error(e.getMessage()));
         }
     }
+    */
+    
+    @PutMapping("/api/student/profile")
+    public ResponseEntity<?> updateProfile(
+            Authentication auth,
+            @RequestBody ProfileRequest request) {
+        try {
+            profileService.updateProfile(
+                auth.getName(), request);
+            return ResponseEntity.ok(
+                ApiResponse.success(
+                    "Profile updated successfully!"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                .body(ApiResponse.error(e.getMessage()));
+        }
+    }
+    
+    
+    
+    
+    /*
 
     // ===================================================
     // 🔒 POST /api/student/profile/photo
@@ -321,6 +345,46 @@ public class ProfileController {
                     "Upload failed: " + e.getMessage()));
         }
     }
+    
+    */
+    
+    @PostMapping("/api/student/profile/photo")
+    public ResponseEntity<?> uploadProfilePhoto(
+            Authentication auth,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            String contentType = file.getContentType();
+            if (contentType == null ||
+                    !contentType.startsWith("image/")) {
+                return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(
+                        "Only image files allowed!"));
+            }
+ 
+            // ✅ Upload to Cloudinary
+            String photoUrl = cloudinaryService
+                .uploadPhoto(file, "profiles");
+ 
+            // Save Cloudinary URL to database
+            Student student = studentRepository
+                .findByEmail(auth.getName())
+                .orElseThrow(() ->
+                    new RuntimeException("Student not found"));
+            student.setProfilePhoto(photoUrl);
+            studentRepository.save(student);
+ 
+            return ResponseEntity.ok(
+                ApiResponse.success(
+                    "Profile photo uploaded! ✅", photoUrl));
+ 
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body(ApiResponse.error(
+                    "Upload failed: " + e.getMessage()));
+        }
+    }
+    
+    /*
 
     // ===================================================
     // 🔒 POST /api/student/profile/cover
@@ -365,6 +429,47 @@ public class ProfileController {
                     "Upload failed: " + e.getMessage()));
         }
     }
+    
+    */
+    
+    
+    @PostMapping("/api/student/profile/cover")
+    public ResponseEntity<?> uploadCoverPhoto(
+            Authentication auth,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            String contentType = file.getContentType();
+            if (contentType == null ||
+                    !contentType.startsWith("image/")) {
+                return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(
+                        "Only image files allowed!"));
+            }
+ 
+            // ✅ Upload to Cloudinary
+            String coverUrl = cloudinaryService
+                .uploadPhoto(file, "covers");
+ 
+            // Save Cloudinary URL to database
+            Student student = studentRepository
+                .findByEmail(auth.getName())
+                .orElseThrow(() ->
+                    new RuntimeException("Student not found"));
+            student.setCoverPhoto(coverUrl);
+            studentRepository.save(student);
+ 
+            return ResponseEntity.ok(
+                ApiResponse.success(
+                    "Cover photo uploaded! ✅", coverUrl));
+ 
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                .body(ApiResponse.error(
+                    "Upload failed: " + e.getMessage()));
+        }
+    }
+    
+    
 
     // ===================================================
     // 🔒 POST /api/student/personal-details
@@ -385,6 +490,8 @@ public class ProfileController {
                 .body(ApiResponse.error(e.getMessage()));
         }
     }
+    
+    
 
     // ===================================================
     // 🔒 GET /api/student/personal-details
