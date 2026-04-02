@@ -1017,11 +1017,20 @@ if (!token) {
 }
 
 // ===== INIT =====
+/*
 window.onload = function() {
   loadDashboard();
   document.getElementById('portfolio-link').value =
     window.location.origin + '/index.html?u=' + currentUser.username;
+};*/
+
+window.onload = function() {
+  loadDashboard();
+  document.getElementById('portfolio-link').value =
+    window.location.origin + '/' + currentUser.username;
 };
+
+
 
 // ===== API HELPER =====
 
@@ -1840,9 +1849,15 @@ function copyLink() {
   showToast('Link copied! 📋', 'success');
 }
 
+/*
 function previewPortfolio() {
   const username = currentUser.username;
   window.open('/index.html?u=' + username, '_blank');
+}*/
+
+function previewPortfolio() {
+  const username = currentUser.username;
+  window.open('/' + username, '_blank');
 }
 
 function logout() {
