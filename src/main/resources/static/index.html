@@ -286,6 +286,7 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);max-wi
 <script>
 const API = window.location.origin;
 
+/*
 function getUsername() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('u')) return params.get('u');
@@ -293,7 +294,25 @@ function getUsername() {
   const idx = parts.indexOf('student');
   if (idx !== -1 && parts[idx+1]) return parts[idx+1];
   return null;
+}*/
+
+function getUsername() {
+  const params = new URLSearchParams(window.location.search);
+
+  // 1. Support old format (?u=chandana)
+  if (params.get('u')) return params.get('u');
+
+  // 2. New clean URL (/chandana)
+  const parts = window.location.pathname.split('/').filter(Boolean);
+
+  if (parts.length > 0) return parts[0];
+
+  return null;
 }
+
+
+
+
 
 const username = getUsername();
 let resumeDownloadable = false;
