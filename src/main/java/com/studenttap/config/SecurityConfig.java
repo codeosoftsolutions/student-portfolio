@@ -71,6 +71,9 @@ public class SecurityConfig {
                 .requestMatchers("/login.html").permitAll()
                 .requestMatchers("/register.html").permitAll()
                 .requestMatchers("/dashboard.html").permitAll()
+                
+                // Updated
+                .requestMatchers("/*").permitAll()
 
                 // ✅ Static assets
                 .requestMatchers("/assets/**").permitAll()
