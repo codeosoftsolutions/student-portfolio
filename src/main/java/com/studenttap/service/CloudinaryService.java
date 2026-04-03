@@ -3,6 +3,7 @@
 package com.studenttap.service;
 
 import com.cloudinary.Cloudinary;
+
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -59,7 +60,7 @@ public class CloudinaryService {
                 + e.getMessage());
         }
     }
-/*
+
     // ✅ Get public ID from URL for deletion
     public String getPublicIdFromUrl(String url) {
         if (url == null) return null;
@@ -69,7 +70,8 @@ public class CloudinaryService {
         // Remove extension
         return "studenttap/" + filename.split("\\.")[0];
     }
-    */
+    
+    /*
  // ✅ Extract public ID from Cloudinary URL
     public String getPublicIdFromUrl(String url) {
         if (url == null || !url.contains("cloudinary")) 
@@ -84,7 +86,7 @@ public class CloudinaryService {
         } catch (Exception e) {
             return null;
         }
-    }
+    }*/
     
     
     
