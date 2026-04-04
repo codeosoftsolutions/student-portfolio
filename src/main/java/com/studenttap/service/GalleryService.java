@@ -1,7 +1,7 @@
 
 
 
-
+/*
 package com.studenttap.service;
 
 import com.cloudinary.Cloudinary;
@@ -108,9 +108,9 @@ public class GalleryService {
         return studentRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Student not found!"));
     }
-}
+}*/
 
-/*
+
 package com.studenttap.service;
  
 import com.studenttap.model.GalleryPhoto;
@@ -251,7 +251,7 @@ public class GalleryService {
             .orElseThrow(() ->
                 new RuntimeException("Student not found!"));
     }
-}*/
+}
 
 /*
 package com.studenttap.service;
