@@ -1,5 +1,116 @@
 
 
+
+
+package com.studenttap.service;
+
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import com.studenttap.model.GalleryPhoto;
+import com.studenttap.model.Student;
+import com.studenttap.repository.GalleryRepository;
+import com.studenttap.repository.StudentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class GalleryService {
+
+    @Autowired
+    private GalleryRepository galleryRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private Cloudinary cloudinary;
+
+    private static final int MAX_PHOTOS = 20;
+
+    // ===================================================
+    // UPLOAD PHOTO (Cloudinary version ✅)
+    // ===================================================
+    public GalleryPhoto uploadPhoto(
+            String email,
+            MultipartFile file,
+            String caption) throws IOException {
+
+        Student student = getStudent(email);
+
+        long count = galleryRepository
+                .countByStudentId(student.getId());
+
+        if (count >= MAX_PHOTOS) {
+            throw new RuntimeException(
+                    "Maximum " + MAX_PHOTOS + " photos allowed!");
+        }
+
+        // Validate image
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new RuntimeException("Only image files allowed!");
+        }
+
+        // ✅ Upload to Cloudinary
+        Map uploadResult = cloudinary.uploader().upload(
+                file.getBytes(),
+                ObjectUtils.emptyMap()
+        );
+
+        String imageUrl = uploadResult.get("secure_url").toString();
+
+        // Save to DB
+        GalleryPhoto photo = new GalleryPhoto();
+        photo.setStudent(student);
+        photo.setPhotoPath(imageUrl); // ✅ FULL URL
+        photo.setCaption(caption);
+        photo.setDisplayOrder((int) count + 1);
+
+        return galleryRepository.save(photo);
+    }
+
+    // ===================================================
+    public List<GalleryPhoto> getGallery(String email) {
+        Student student = getStudent(email);
+        return galleryRepository
+                .findByStudentIdOrderByDisplayOrderAsc(student.getId());
+    }
+
+    public List<GalleryPhoto> getGalleryByStudentId(Long studentId) {
+        return galleryRepository
+                .findByStudentIdOrderByDisplayOrderAsc(studentId);
+    }
+
+    // ===================================================
+    @Transactional
+    public void deletePhoto(String email, Long photoId) {
+
+        Student student = getStudent(email);
+
+        GalleryPhoto photo = galleryRepository.findById(photoId)
+                .orElseThrow(() -> new RuntimeException("Photo not found!"));
+
+        if (!photo.getStudent().getId().equals(student.getId())) {
+            throw new RuntimeException("Unauthorized!");
+        }
+
+        // ❌ No local file delete needed anymore
+        galleryRepository.deleteById(photoId);
+    }
+
+    private Student getStudent(String email) {
+        return studentRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Student not found!"));
+    }
+}
+
+/*
 package com.studenttap.service;
  
 import com.studenttap.model.GalleryPhoto;
@@ -140,7 +251,7 @@ public class GalleryService {
             .orElseThrow(() ->
                 new RuntimeException("Student not found!"));
     }
-}
+}*/
 
 /*
 package com.studenttap.service;
