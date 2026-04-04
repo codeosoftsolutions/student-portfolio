@@ -1,5 +1,5 @@
 
-
+/*
 package com.studenttap.service;
  
 import com.studenttap.model.GalleryPhoto;
@@ -140,9 +140,9 @@ public class GalleryService {
             .orElseThrow(() ->
                 new RuntimeException("Student not found!"));
     }
-}
+}*/
 
-/*
+
 package com.studenttap.service;
 
 import com.studenttap.model.GalleryPhoto;
@@ -249,6 +249,6 @@ public class GalleryService {
                 new RuntimeException("Student not found!"));
     }
 }
-*/
+
 	
  
