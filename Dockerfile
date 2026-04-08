@@ -28,4 +28,4 @@ COPY --from=build /app/target/student-portfolio1-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
 
 # Run the app
-ENTRYPOINT ["java", "-Dserver.port=${PORT:-8080}", "-jar", "app.jar"]
+ENTRYPOINT ["java","-Xmx400m", "-Xms200m","-XX:+UseSerialGC", "-Dserver.port=${PORT:-8080}", "-jar", "app.jar"]

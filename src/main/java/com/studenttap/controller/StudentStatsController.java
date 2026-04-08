@@ -87,7 +87,7 @@ public class StudentStatsController {
 
             return ResponseEntity.ok(
                 ApiResponse.success("Stats", stats));
-
+            
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                 .body(ApiResponse.error(e.getMessage()));
