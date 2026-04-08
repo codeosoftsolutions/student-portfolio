@@ -1,385 +1,282 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Login — StudentTap</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
-
-
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --accent:#6366f1;
-  --accent2:#818cf8;
-  --danger:#ef4444;
-  --success:#22c55e;
-  --text:#1e293b;
-  --muted:#64748b;
-  --border:#e2e8f0;
-  --card:#ffffff;
-  --bg:#f1f5f9;
-}
-body{
-  font-family:'Sora',sans-serif;
-  min-height:100vh;
-  display:flex;
-  background:var(--bg);
-  overflow:hidden;
-}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:linear-gradient(135deg,#1a1a2e,#312e81);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.page-wrap{display:flex;gap:20px;width:100%;max-width:1100px;align-items:flex-start;justify-content:center;}
 
-/* LEFT PANEL */
-.left-panel{
-  flex:1;
-  background:linear-gradient(145deg,#0f172a 0%,#1e1b4b 50%,#312e81 100%);
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  padding:48px;
-  position:relative;
-  overflow:hidden;
-}
-.left-panel::before{
-  content:'';position:absolute;
-  width:400px;height:400px;
-  background:rgba(99,102,241,0.15);
-  border-radius:50%;top:-100px;right:-100px;
-}
-.left-panel::after{
-  content:'';position:absolute;
-  width:300px;height:300px;
-  background:rgba(129,140,248,0.1);
-  border-radius:50%;bottom:-80px;left:-80px;
-}
-.brand{
-  position:relative;z-index:2;
-  text-align:center;
-  animation:fadeUp 0.6s ease forwards;
-}
-.brand-icon{
-  width:72px;height:72px;
-  background:var(--accent);
-  border-radius:20px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:36px;margin:0 auto 20px;
-  box-shadow:0 8px 32px rgba(99,102,241,0.4);
-}
-.brand-name{
-  font-family:'DM Serif Display',serif;
-  font-size:36px;color:#fff;margin-bottom:8px;
-}
-.brand-tagline{
-  font-size:14px;color:rgba(255,255,255,0.6);
-  line-height:1.6;max-width:280px;margin:0 auto;
-}
+/* AD SPACE */
+.ad-space{width:200px;flex-shrink:0;display:flex;flex-direction:column;gap:12px;}
+.ad-box{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;text-align:center;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ad-label{font-size:9px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.ad-content{font-size:11px;color:rgba(255,255,255,0.5);}
+@media(max-width:768px){.ad-space{display:none;}}
 
-.features{
-  position:relative;z-index:2;
-  margin-top:48px;display:flex;
-  flex-direction:column;gap:16px;width:100%;max-width:320px;
-}
-.feature-item{
-  display:flex;align-items:center;gap:14px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.08);
-  border-radius:12px;padding:14px 16px;
-  animation:fadeUp 0.6s ease forwards;
-}
-.feature-item:nth-child(2){animation-delay:0.1s;}
-.feature-item:nth-child(3){animation-delay:0.2s;}
-.feature-icon{font-size:22px;}
-.feature-text{font-size:13px;color:rgba(255,255,255,0.7);font-weight:500;}
+/* CARD */
+.card{background:white;border-radius:20px;padding:36px 32px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.logo{text-align:center;margin-bottom:24px;}
+.logo-icon{width:56px;height:56px;background:linear-gradient(135deg,#6366f1,#818cf8);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 10px;}
+.logo-text{font-size:22px;font-weight:700;color:#1e293b;}
+.logo-sub{font-size:12px;color:#64748b;margin-top:3px;}
 
-/* RIGHT PANEL */
-.right-panel{
-  width:480px;
-  display:flex;align-items:center;justify-content:center;
-  padding:32px;background:var(--card);
-  box-shadow:-4px 0 24px rgba(0,0,0,0.08);
-}
-.login-box{width:100%;max-width:380px;}
+/* TYPE SELECTOR */
+.type-label{font-size:13px;font-weight:600;color:#374151;margin-bottom:10px;text-align:center;}
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;}
+.type-btn{padding:10px 8px;border:2px solid #e2e8f0;border-radius:12px;background:white;cursor:pointer;text-align:center;transition:all 0.2s;font-family:'Sora',sans-serif;}
+.type-btn:hover{border-color:#6366f1;background:#f8f7ff;}
+.type-btn.active{border-color:#6366f1;background:linear-gradient(135deg,#6366f1,#818cf8);color:white;}
+.type-icon{font-size:20px;display:block;margin-bottom:3px;}
+.type-name{font-size:11px;font-weight:600;}
 
-.login-header{margin-bottom:32px;}
-.login-title{
-  font-family:'DM Serif Display',serif;
-  font-size:28px;color:var(--text);margin-bottom:6px;
-}
-.login-sub{font-size:14px;color:var(--muted);}
+.divider{height:1px;background:#e2e8f0;margin:4px 0 16px;}
 
-.form-group{margin-bottom:18px;}
-.form-label{
-  display:block;font-size:12px;font-weight:600;
-  color:var(--text);margin-bottom:6px;
-}
-.input-wrap{position:relative;}
-.form-input{
-  width:100%;padding:12px 16px 12px 44px;
-  border:1.5px solid var(--border);
-  border-radius:12px;font-family:'Sora',sans-serif;
-  font-size:13px;color:var(--text);
-  background:var(--bg);transition:all 0.2s;outline:none;
-}
-.form-input:focus{
-  border-color:var(--accent);
-  background:#fff;
-  box-shadow:0 0 0 3px rgba(99,102,241,0.1);
-}
-.input-icon{
-  position:absolute;left:14px;top:50%;
-  transform:translateY(-50%);font-size:16px;
-}
-.input-toggle{
-  position:absolute;right:14px;top:50%;
-  transform:translateY(-50%);
-  background:none;border:none;cursor:pointer;
-  font-size:16px;color:var(--muted);
-}
-.form-error{
-  font-size:11px;color:var(--danger);
-  margin-top:4px;display:none;
-}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block;}
+.form-input{width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-family:'Sora',sans-serif;font-size:13px;color:#1e293b;outline:none;transition:border-color 0.2s;}
+.form-input:focus{border-color:#6366f1;}
 
-.btn-login{
-  width:100%;padding:13px;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:#fff;border:none;border-radius:12px;
-  font-family:'Sora',sans-serif;font-size:14px;
-  font-weight:700;cursor:pointer;
-  transition:all 0.2s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  box-shadow:0 4px 16px rgba(99,102,241,0.35);
-  margin-top:24px;
-}
-.btn-login:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 24px rgba(99,102,241,0.45);
-}
-.btn-login:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+.forgot-link{text-align:right;margin-top:-8px;margin-bottom:12px;}
+.forgot-link a{font-size:12px;color:#6366f1;text-decoration:none;}
 
-.divider{
-  display:flex;align-items:center;gap:12px;
-  margin:20px 0;
-}
-.divider-line{flex:1;height:1px;background:var(--border);}
-.divider-text{font-size:12px;color:var(--muted);}
+.btn{width:100%;padding:13px;background:linear-gradient(135deg,#6366f1,#818cf8);color:white;border:none;border-radius:10px;font-family:'Sora',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn:hover{opacity:0.9;transform:translateY(-1px);}
+.btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
 
-.register-link{
-  text-align:center;font-size:13px;color:var(--muted);
-}
-.register-link a{
-  color:var(--accent);font-weight:600;
-  text-decoration:none;
-}
-.register-link a:hover{text-decoration:underline;}
+.error-msg{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;padding:10px;border-radius:8px;font-size:12px;margin-bottom:12px;display:none;}
 
-.alert{
-  padding:12px 16px;border-radius:10px;
-  font-size:13px;margin-bottom:16px;display:none;
-  align-items:center;gap:8px;
-}
-.alert.error{
-  background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;
-}
-.alert.success{
-  background:#f0fdf4;border:1px solid #86efac;color:#16a34a;
-}
+.register-link{text-align:center;margin-top:16px;font-size:13px;color:#64748b;}
+.register-link a{color:#6366f1;font-weight:600;text-decoration:none;}
 
-.spinner{
-  width:16px;height:16px;
-  border:2px solid rgba(255,255,255,0.4);
-  border-top-color:#fff;border-radius:50%;
-  animation:spin 0.7s linear infinite;
-}
-@keyframes spin{to{transform:rotate(360deg);}}
-@keyframes fadeUp{
-  from{opacity:0;transform:translateY(20px);}
-  to{opacity:1;transform:translateY(0);}
-}
+/* Company email hint */
+.company-hint{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8;padding:8px 12px;border-radius:8px;font-size:11px;margin-bottom:12px;display:none;}
+.company-hint.show{display:block;}
 
-@media(max-width:768px){
-  .left-panel{display:none;}
-  .right-panel{width:100%;box-shadow:none;background:var(--bg);}
-  .login-box{padding:0;}
-}
+/* Admin link - hidden at bottom */
+.admin-link{text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid #f1f5f9;}
+.admin-link a{font-size:11px;color:#cbd5e1;text-decoration:none;}
+.admin-link a:hover{color:#94a3b8;}
 </style>
 </head>
 <body>
+<div class="page-wrap">
 
-<!-- LEFT PANEL -->
-<div class="left-panel">
-  <div class="brand">
-    <div class="brand-icon">🎓</div>
-    <div class="brand-name">StudentTap</div>
-    <div class="brand-tagline">
-      Your digital NFC portfolio — tap your card,<br/>
-      share your story with the world
-    </div>
-  </div>
-  <div class="features">
-    <div class="feature-item">
-      <div class="feature-icon">📇</div>
-      <div class="feature-text">One tap shares your complete portfolio</div>
-    </div>
-    <div class="feature-item">
-      <div class="feature-icon">📄</div>
-      <div class="feature-text">Professional resume with 4 templates</div>
-    </div>
-    <div class="feature-item">
-      <div class="feature-icon">✉️</div>
-      <div class="feature-text">Receive messages from recruiters directly</div>
-    </div>
-  </div>
-</div>
-
-<!-- RIGHT PANEL -->
-<div class="right-panel">
-  <div class="login-box">
-    <div class="login-header">
-      <h1 class="login-title">Welcome back 👋</h1>
-      <p class="login-sub">Login to manage your portfolio</p>
+  <!-- MAIN LOGIN CARD -->
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">🎓</div>
+      <div class="logo-text">Welcome back 👋</div>
+      <div class="logo-sub">Login to manage your account</div>
     </div>
 
-    <!-- Alert -->
-    <div class="alert error" id="alert-error">
-      <span>⚠️</span><span id="alert-msg">Invalid credentials</span>
+    <div class="error-msg" id="error-msg"></div>
+
+    <!-- USER TYPE SELECTION -->
+    <div class="type-label">Login as:</div>
+    <div class="type-grid">
+      <button class="type-btn active" onclick="selectType('student',this)">
+        <span class="type-icon">👨‍🎓</span>
+        <div class="type-name">Student</div>
+      </button>
+      <button class="type-btn" onclick="selectType('hostel',this)">
+        <span class="type-icon">🏠</span>
+        <div class="type-name">Hostel / PG</div>
+      </button>
+      <button class="type-btn" onclick="selectType('institute',this)">
+        <span class="type-icon">🏫</span>
+        <div class="type-name">Institute</div>
+      </button>
+      <button class="type-btn" onclick="selectType('company',this)">
+        <span class="type-icon">🏢</span>
+        <div class="type-name">Company</div>
+      </button>
     </div>
 
-    <!-- Email -->
+    <div class="divider"></div>
+
+    <!-- Company hint -->
+    <div class="company-hint" id="company-hint">
+      🏢 Use your official company email to login
+      (e.g. hr@company.com)
+    </div>
+
+    <!-- EMAIL / PASSWORD -->
     <div class="form-group">
-      <label class="form-label">Email Address</label>
-      <div class="input-wrap">
-        <span class="input-icon">✉️</span>
-        <input class="form-input" type="email"
-          id="email" placeholder="your@email.com"
-          onkeydown="if(event.key==='Enter')login()"/>
-      </div>
-      <div class="form-error" id="err-email">
-        Please enter a valid email
-      </div>
+      <label class="form-label" id="email-label">
+        Email Address
+      </label>
+      <input class="form-input" id="login-email"
+        type="email" placeholder="your@email.com"/>
     </div>
 
-    <!-- Password -->
     <div class="form-group">
       <label class="form-label">Password</label>
-      <div class="input-wrap">
-        <span class="input-icon">🔒</span>
-        <input class="form-input" type="password"
-          id="password" placeholder="Enter your password"
-          onkeydown="if(event.key==='Enter')login()"/>
-        <button class="input-toggle" onclick="togglePwd()"
-          id="pwd-toggle" type="button">👁️</button>
-      </div>
-      <div class="form-error" id="err-pwd">
-        Password is required
-      </div>
+      <input class="form-input" id="login-password"
+        type="password" placeholder="Your password"/>
     </div>
 
-    <!-- Login Button -->
-    <button class="btn-login" id="login-btn" onclick="login()">
+    <div class="forgot-link">
+      <a href="/forgot-password.html">Forgot password?</a>
+    </div>
+
+    <button class="btn" id="login-btn" onclick="doLogin()">
       🚀 Login to Dashboard
     </button>
-	
-	<a href="/forgot-password.html">Forgot Password? 🔑</a>
-
-    <div class="divider">
-      <div class="divider-line"></div>
-      <div class="divider-text">New to StudentTap?</div>
-      <div class="divider-line"></div>
-    </div>
 
     <div class="register-link">
-      Don't have an account?
-      <a href="register.html">Create your portfolio →</a>
+      New to StudentTap?
+      <a href="/register.html">Create your account →</a>
+    </div>
+
+    <!-- HIDDEN ADMIN LINK -->
+    <div class="admin-link">
+      <a href="/admin-login.html">⚙</a>
     </div>
   </div>
-  
-</div>
 
+  <!-- AD SPACE RIGHT SIDE -->
+  <div class="ad-space">
+    <div class="ad-box" id="ad-1">
+      <div class="ad-label">Advertisement</div>
+      <div class="ad-content">Ad space available</div>
+    </div>
+    <div class="ad-box" id="ad-2">
+      <div class="ad-label">Advertisement</div>
+      <div class="ad-content">Ad space available</div>
+    </div>
+    <div class="ad-box" id="ad-3">
+      <div class="ad-label">Advertisement</div>
+      <div class="ad-content">Ad space available</div>
+    </div>
+  </div>
+
+</div>
 
 <script>
 const API = window.location.origin;
+let currentType = 'student';
 
-// If already logged in go to dashboard
-if (localStorage.getItem('token')) {
-  window.location.href = 'dashboard.html';
-}
+// Dashboard redirect per user type
+const DASHBOARDS = {
+  'STUDENT':   '/student-home.html',
+  'HOSTEL':    '/hostel-dashboard.html',
+  'INSTITUTE': '/institute-dashboard.html',
+  'COMPANY':   '/company-dashboard.html'
+};
 
-function togglePwd() {
-  const input = document.getElementById('password');
-  const btn = document.getElementById('pwd-toggle');
-  if (input.type === 'password') {
-    input.type = 'text';
-    btn.textContent = '🙈';
+function selectType(type, btn) {
+  currentType = type;
+  document.querySelectorAll('.type-btn')
+    .forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  // Show company hint
+  const hint = document.getElementById('company-hint');
+  if (type === 'company') {
+    hint.classList.add('show');
   } else {
-    input.type = 'password';
-    btn.textContent = '👁️';
+    hint.classList.remove('show');
   }
 }
 
-async function login() {
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 5000);
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email')
+    .value.trim();
+  const password = document.getElementById('login-password')
+    .value;
+
+  if (!email || !password) {
+    showError('Please enter email and password!');
+    return;
+  }
+
   const btn = document.getElementById('login-btn');
-  const alert = document.getElementById('alert-error');
-
-  // Hide previous errors
-  alert.style.display = 'none';
-  document.getElementById('err-email').style.display = 'none';
-  document.getElementById('err-pwd').style.display = 'none';
-
-  // Validate
-  let valid = true;
-  if (!email || !email.includes('@')) {
-    document.getElementById('err-email').style.display = 'block';
-    valid = false;
-  }
-  if (!password) {
-    document.getElementById('err-pwd').style.display = 'block';
-    valid = false;
-  }
-  if (!valid) return;
-
-  // Show loading
   btn.disabled = true;
-  btn.innerHTML = '<div class="spinner"></div> Logging in...';
+  btn.textContent = '⏳ Logging in...';
 
   try {
-    const res = await fetch(API + '/api/auth/login', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({email, password})
-    });
+    // Determine endpoint based on type
+    let endpoint = '/api/auth/login';
+    if (currentType !== 'student') {
+      endpoint = '/api/auth/login-business';
+    }
 
+    const res = await fetch(API + endpoint, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        email, password,
+        userType: currentType.toUpperCase()
+      })
+    });
     const data = await res.json();
 
-    if (res.ok && data.token) {
+    if (res.ok && (data.token || data.success)) {
       // Save token and user info
       localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify({
-        username: data.username,
-        fullName: data.fullName,
-        email: data.email,
-        isFresher: data.isFresher
-      }));
-      // Go to dashboard
-      window.location.href = 'dashboard.html';
+      localStorage.setItem('user',
+        JSON.stringify(data.user || {email, userType: currentType.toUpperCase()}));
+      localStorage.setItem('userType',
+        currentType.toUpperCase());
+
+      // Redirect to correct dashboard
+      const userType = (data.user && data.user.userType)
+        || currentType.toUpperCase();
+      const dashboard = DASHBOARDS[userType]
+        || '/student-home.html';
+
+      window.location.href = dashboard;
+
     } else {
-      // Show error
-      document.getElementById('alert-msg').textContent =
-        data.message || 'Invalid email or password!';
-      alert.style.display = 'flex';
-      btn.disabled = false;
-      btn.innerHTML = '🚀 Login to Dashboard';
+      showError(data.message || 'Invalid email or password!');
     }
+
   } catch(e) {
-    document.getElementById('alert-msg').textContent =
-      'Cannot connect to server. Is the app running?';
-    alert.style.display = 'flex';
+    showError('Cannot connect to server. Is the app running?');
+  } finally {
     btn.disabled = false;
-    btn.innerHTML = '🚀 Login to Dashboard';
+    btn.textContent = '🚀 Login to Dashboard';
   }
 }
+
+// Allow Enter key to login
+document.addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') doLogin();
+});
+
+// Load ads
+async function loadAds() {
+  try {
+    const res = await fetch(API + '/api/public/ads');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.data && data.data.length > 0) {
+      data.data.slice(0, 3).forEach((ad, i) => {
+        const box = document.getElementById('ad-'+(i+1));
+        if (box && ad.imageUrl) {
+          box.innerHTML = `
+            <div class="ad-label">Sponsored</div>
+            <a href="${ad.linkUrl||'#'}" target="_blank">
+              <img src="${ad.imageUrl}"
+                style="width:100%;border-radius:6px;"/>
+            </a>`;
+        }
+      });
+    }
+  } catch(e) {}
+}
+loadAds();
 </script>
 </body>
 </html>

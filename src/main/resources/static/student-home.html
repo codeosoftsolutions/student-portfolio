@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Home — StudentTap</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --primary:#1a1a2e;--accent:#6366f1;--accent2:#818cf8;
+  --bg:#f8fafc;--card:#fff;--border:#e2e8f0;
+  --text:#1e293b;--muted:#64748b;
+}
+body{font-family:'Sora',sans-serif;background:var(--bg);min-height:100vh;}
+
+/* TOP NAV */
+.topnav{background:var(--primary);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.nav-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.nav-logo-text{font-size:16px;font-weight:700;color:white;}
+.nav-user{display:flex;align-items:center;gap:10px;}
+.nav-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;}
+.nav-name{font-size:13px;color:rgba(255,255,255,0.8);}
+.nav-logout{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:6px 12px;border-radius:8px;font-family:'Sora',sans-serif;font-size:12px;cursor:pointer;}
+
+/* PAGE LAYOUT WITH ADS */
+.page-layout{display:flex;gap:0;min-height:calc(100vh - 60px);}
+
+/* MAIN CONTENT */
+.main-content{flex:1;padding:24px 20px;max-width:calc(100% - 220px);}
+@media(max-width:768px){
+  .main-content{max-width:100%;}
+  .right-ads{display:none;}
+}
+
+/* WELCOME BANNER */
+.welcome-banner{background:linear-gradient(135deg,var(--primary),#312e81);border-radius:16px;padding:20px 24px;margin-bottom:24px;color:white;display:flex;align-items:center;justify-content:space-between;}
+.welcome-text h2{font-family:'DM Serif Display',serif;font-size:22px;}
+.welcome-text p{font-size:13px;color:rgba(255,255,255,0.7);margin-top:4px;}
+.welcome-emoji{font-size:48px;}
+
+/* SECTION TITLE */
+.section-title{font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px;}
+
+/* ===== 6 BOXES GRID ===== */
+.boxes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px;}
+@media(max-width:600px){.boxes-grid{grid-template-columns:repeat(2,1fr);}}
+
+.box-card{background:var(--card);border:1.5px solid var(--border);border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;}
+.box-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(99,102,241,0.15);border-color:var(--accent);}
+.box-card.coming-soon{cursor:default;opacity:0.7;}
+.box-card.coming-soon:hover{transform:none;box-shadow:none;border-color:var(--border);}
+
+.box-icon{font-size:36px;margin-bottom:10px;display:block;}
+.box-title{font-size:14px;font-weight:700;color:var(--text);}
+.box-desc{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5;}
+
+/* Box colors */
+.box-nfc{border-color:#c7d2fe;background:linear-gradient(135deg,#fafafe,#f0f0ff);}
+.box-nfc:hover{border-color:var(--accent);background:linear-gradient(135deg,#eef2ff,#e0e7ff);}
+.box-hostel{border-color:#bbf7d0;background:linear-gradient(135deg,#fafffe,#f0fff8);}
+.box-hostel:hover{border-color:#22c55e;background:linear-gradient(135deg,#f0fdf4,#dcfce7);}
+.box-institute{border-color:#fed7aa;background:linear-gradient(135deg,#fffaf5,#fff7ed);}
+.box-institute:hover{border-color:#f97316;background:linear-gradient(135deg,#fff7ed,#ffedd5);}
+.box-company{border-color:#bfdbfe;background:linear-gradient(135deg,#fafcff,#eff6ff);}
+.box-company:hover{border-color:#3b82f6;background:linear-gradient(135deg,#eff6ff,#dbeafe);}
+.box-coming{background:#f8fafc;border-color:#e2e8f0;}
+
+.coming-badge{position:absolute;top:10px;right:10px;background:#f1f5f9;color:var(--muted);font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* QUICK STATS */
+.stats-row{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap;}
+.stat-card{flex:1;min-width:120px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.stat-num{font-family:'DM Serif Display',serif;font-size:24px;color:var(--accent);}
+.stat-lbl{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-top:2px;}
+
+/* NFC LINK */
+.nfc-link-card{background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:14px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.nfc-link-text{color:white;}
+.nfc-link-label{font-size:11px;color:rgba(255,255,255,0.7);font-weight:600;text-transform:uppercase;}
+.nfc-link-url{font-size:13px;color:white;font-weight:600;margin-top:3px;word-break:break-all;}
+.nfc-copy-btn{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.3);color:white;padding:8px 14px;border-radius:8px;font-family:'Sora',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
+
+/* ===== RIGHT ADS SIDEBAR ===== */
+.right-ads{width:200px;flex-shrink:0;background:#f1f5f9;border-left:1px solid var(--border);padding:16px 12px;display:flex;flex-direction:column;gap:12px;}
+.ads-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.ad-box{background:white;border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ad-sponsored{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.ad-placeholder{font-size:11px;color:#cbd5e1;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#1e293b;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;opacity:0;transition:all 0.3s;z-index:9999;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="topnav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">🎓</div>
+    <div class="nav-logo-text">StudentTap</div>
+  </div>
+  <div class="nav-user">
+    <div class="nav-avatar" id="nav-avatar">S</div>
+    <div class="nav-name" id="nav-name">Student</div>
+    <button class="nav-logout" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<!-- PAGE LAYOUT -->
+<div class="page-layout">
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- WELCOME BANNER -->
+    <div class="welcome-banner">
+      <div class="welcome-text">
+        <h2 id="welcome-text">Welcome back! 👋</h2>
+        <p>Manage your profile, find hostels, institutes and job opportunities</p>
+      </div>
+      <div class="welcome-emoji">🎓</div>
+    </div>
+
+    <!-- NFC PORTFOLIO LINK -->
+    <div class="nfc-link-card">
+      <div class="nfc-link-text">
+        <div class="nfc-link-label">📱 Your NFC Portfolio Link</div>
+        <div class="nfc-link-url" id="portfolio-link">Loading...</div>
+      </div>
+      <button class="nfc-copy-btn" onclick="copyPortfolioLink()">
+        📋 Copy Link
+      </button>
+    </div>
+
+    <!-- QUICK STATS -->
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-views">-</div>
+        <div class="stat-lbl">Profile Views</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-messages">0</div>
+        <div class="stat-lbl">Messages</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-edu">0</div>
+        <div class="stat-lbl">Education</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-certs">0</div>
+        <div class="stat-lbl">Certs</div>
+      </div>
+    </div>
+
+    <!-- 6 BOXES -->
+    <div class="section-title">Quick Access</div>
+    <div class="boxes-grid">
+
+      <!-- BOX 1: NFC Portfolio -->
+      <div class="box-card box-nfc"
+        onclick="window.location.href='/dashboard.html'">
+        <span class="box-icon">📱</span>
+        <div class="box-title">NFC Portfolio</div>
+        <div class="box-desc">Manage your digital portfolio & NFC card</div>
+      </div>
+
+      <!-- BOX 2: Hostel / PG -->
+      <div class="box-card box-hostel"
+        onclick="window.location.href='/hostels.html'">
+        <span class="box-icon">🏠</span>
+        <div class="box-title">Hostel / PG</div>
+        <div class="box-desc">Find nearby hostels and PG accommodations</div>
+      </div>
+
+      <!-- BOX 3: Coaching Institutes -->
+      <div class="box-card box-institute"
+        onclick="window.location.href='/institutes.html'">
+        <span class="box-icon">🏫</span>
+        <div class="box-title">Institutes</div>
+        <div class="box-desc">Explore coaching and training institutes</div>
+      </div>
+
+      <!-- BOX 4: Companies / Jobs -->
+      <div class="box-card box-company"
+        onclick="window.location.href='/companies.html'">
+        <span class="box-icon">🏢</span>
+        <div class="box-title">Companies</div>
+        <div class="box-desc">Explore companies and job opportunities</div>
+      </div>
+
+      <!-- BOX 5: Coming Soon -->
+      <div class="box-card box-coming coming-soon">
+        <span class="coming-badge">Coming Soon</span>
+        <span class="box-icon">📢</span>
+        <div class="box-title">Ads & Offers</div>
+        <div class="box-desc">Exclusive deals and offers for students</div>
+      </div>
+
+      <!-- BOX 6: Coming Soon -->
+      <div class="box-card box-coming coming-soon">
+        <span class="coming-badge">Coming Soon</span>
+        <span class="box-icon">⚙️</span>
+        <div class="box-title">Settings</div>
+        <div class="box-desc">Profile settings and preferences</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT ADS SIDEBAR -->
+  <div class="right-ads">
+    <div class="ads-title">📢 Sponsored</div>
+    <div class="ad-box" id="ad-1">
+      <div class="ad-sponsored">Ad</div>
+      <div class="ad-placeholder">Advertisement</div>
+    </div>
+    <div class="ad-box" id="ad-2">
+      <div class="ad-sponsored">Ad</div>
+      <div class="ad-placeholder">Advertisement</div>
+    </div>
+    <div class="ad-box" id="ad-3">
+      <div class="ad-sponsored">Ad</div>
+      <div class="ad-placeholder">Advertisement</div>
+    </div>
+    <div class="ad-box" id="ad-4">
+      <div class="ad-sponsored">Ad</div>
+      <div class="ad-placeholder">Advertisement</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = window.location.origin;
+
+// Check login
+const token = localStorage.getItem('token');
+const user = JSON.parse(localStorage.getItem('user')||'{}');
+const userType = localStorage.getItem('userType')||'STUDENT';
+
+if (!token) {
+  window.location.href = '/login.html';
+}
+
+// Redirect non-students
+if (userType !== 'STUDENT') {
+  const redirects = {
+    'HOSTEL': '/hostel-dashboard.html',
+    'INSTITUTE': '/institute-dashboard.html',
+    'COMPANY': '/company-dashboard.html'
+  };
+  window.location.href = redirects[userType] || '/login.html';
+}
+
+window.onload = async function() {
+  // Set user info in nav
+  const name = user.fullName || user.username || 'Student';
+  document.getElementById('nav-name').textContent = name;
+  document.getElementById('nav-avatar').textContent =
+    name.charAt(0).toUpperCase();
+  document.getElementById('welcome-text').textContent =
+    'Welcome back, ' + name.split(' ')[0] + '! 👋';
+
+  // Set portfolio link
+  const username = user.username || '';
+  const portfolioUrl = window.location.origin + '/' + username;
+  document.getElementById('portfolio-link').textContent =
+    portfolioUrl;
+
+  // Load stats
+  await loadStats();
+
+  // Load ads
+  await loadAds();
+};
+
+async function loadStats() {
+  try {
+    const res = await fetch(API + '/api/student/stats', {
+      headers: {'Authorization': 'Bearer ' + token}
+    });
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.data) {
+      document.getElementById('stat-messages').textContent =
+        data.data.messageCount || 0;
+      document.getElementById('stat-edu').textContent =
+        data.data.educationCount || 0;
+      document.getElementById('stat-certs').textContent =
+        data.data.certCount || 0;
+    }
+  } catch(e) {}
+}
+
+function copyPortfolioLink() {
+  const url = document.getElementById('portfolio-link')
+    .textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(url)
+      .then(() => showToast('Portfolio link copied! 📋'));
+  } else {
+    const el = document.createElement('textarea');
+    el.value = url;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showToast('Link copied! 📋');
+  }
+}
+
+function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  localStorage.removeItem('userType');
+  window.location.href = '/login.html';
+}
+
+async function loadAds() {
+  try {
+    const res = await fetch(API + '/api/public/ads');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.data && data.data.length > 0) {
+      data.data.slice(0, 4).forEach((ad, i) => {
+        const box = document.getElementById('ad-'+(i+1));
+        if (box && ad.imageUrl) {
+          box.innerHTML = `
+            <div class="ad-sponsored">Sponsored</div>
+            <a href="${ad.linkUrl||'#'}" target="_blank">
+              <img src="${ad.imageUrl}"
+                style="width:100%;border-radius:6px;"/>
+            </a>
+            <div style="font-size:10px;color:#64748b;
+              margin-top:4px;">${ad.title||''}</div>`;
+        }
+      });
+    }
+  } catch(e) {}
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

@@ -22,4 +22,14 @@ public interface EducationRepository
     java.util.Optional<Education>
         findByStudentIdAndEducationType(
             Long studentId, String educationType);
+
+ // Get all education records for a student
+    List<Education> findByStudentId(Long studentId);
+ 
+    // ✅ Count education records for student stats
+    long countByStudentId(Long studentId);
+ 
+    // Find by student and education type
+    List<Education> findByStudentIdOrderByYearOfPassingDesc(
+        Long studentId);
 }

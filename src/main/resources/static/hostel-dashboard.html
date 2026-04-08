@@ -1,0 +1,657 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hostel Dashboard — StudentTap</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--primary:#1a1a2e;--accent:#22c55e;--accent2:#16a34a;--bg:#f8fafc;--card:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;}
+body{font-family:'Sora',sans-serif;background:var(--bg);min-height:100vh;}
+
+/* TOP NAV */
+.topnav{background:var(--primary);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;}
+.nav-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#22c55e,#16a34a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.nav-logo-text{font-size:16px;font-weight:700;color:white;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-name{font-size:13px;color:rgba(255,255,255,0.8);}
+.nav-logout{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:6px 12px;border-radius:8px;font-family:'Sora',sans-serif;font-size:12px;cursor:pointer;}
+
+/* LAYOUT */
+.page-layout{display:flex;min-height:calc(100vh - 60px);}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:white;border-right:1px solid var(--border);padding:16px 12px;flex-shrink:0;}
+.sidebar-menu{display:flex;flex-direction:column;gap:4px;}
+.menu-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);transition:all 0.2s;border:none;background:none;font-family:'Sora',sans-serif;width:100%;text-align:left;}
+.menu-item:hover{background:#f8fafc;color:var(--text);}
+.menu-item.active{background:#f0fdf4;color:#16a34a;font-weight:600;}
+.menu-icon{font-size:16px;width:20px;}
+@media(max-width:768px){.sidebar{display:none;}.right-ads{display:none;}}
+
+/* MAIN */
+.main-content{flex:1;padding:24px 20px;overflow-y:auto;}
+
+/* RIGHT ADS */
+.right-ads{width:200px;flex-shrink:0;background:#f1f5f9;border-left:1px solid var(--border);padding:16px 12px;display:flex;flex-direction:column;gap:12px;}
+.ads-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.ad-box{background:white;border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.ad-sponsored{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+
+/* SECTIONS */
+.section{display:none;}
+.section.active{display:block;}
+
+.page-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+
+/* CARDS */
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;}
+.card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{margin-bottom:12px;}
+.form-label{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block;}
+.form-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:'Sora',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color 0.2s;}
+.form-input:focus{border-color:var(--accent);}
+.form-textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:'Sora',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;min-height:80px;}
+.form-textarea:focus{border-color:var(--accent);}
+.form-select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:'Sora',sans-serif;font-size:13px;color:var(--text);outline:none;background:white;}
+
+/* PRICE GRID */
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.price-item{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px;}
+.price-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+
+/* AMENITIES */
+.amenities-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.amenity-chip{padding:6px 12px;border:2px solid var(--border);border-radius:20px;font-size:12px;cursor:pointer;transition:all 0.2s;background:white;font-family:'Sora',sans-serif;}
+.amenity-chip.selected{border-color:var(--accent);background:#f0fdf4;color:#16a34a;font-weight:600;}
+
+/* PHOTO UPLOAD */
+.photo-upload-area{border:2px dashed var(--border);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:12px;}
+.photo-upload-area:hover{border-color:var(--accent);background:#f0fdf4;}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;}
+.photo-item{position:relative;aspect-ratio:1;border-radius:10px;overflow:hidden;}
+.photo-item img{width:100%;height:100%;object-fit:cover;}
+.photo-delete{position:absolute;top:4px;right:4px;background:rgba(220,38,38,0.8);color:white;border:none;border-radius:6px;padding:3px 6px;font-size:10px;cursor:pointer;}
+
+/* BUTTONS */
+.btn-primary{padding:11px 20px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;border-radius:10px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-primary:hover{opacity:0.9;}
+.btn-primary:disabled{opacity:0.6;cursor:not-allowed;}
+
+/* STATUS TOGGLE */
+.status-toggle{display:flex;align-items:center;gap:12px;margin-top:12px;}
+.toggle-switch{position:relative;width:48px;height:26px;}
+.toggle-switch input{opacity:0;width:0;height:0;}
+.slider{position:absolute;cursor:pointer;inset:0;background:#e2e8f0;border-radius:26px;transition:0.3s;}
+.slider:before{position:absolute;content:"";height:20px;width:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:0.3s;}
+input:checked+.slider{background:#22c55e;}
+input:checked+.slider:before{transform:translateX(22px);}
+
+/* SUCCESS/ERROR */
+.msg{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px;display:none;}
+.msg.success{background:#f0fdf4;border:1px solid #86efac;color:#16a34a;}
+.msg.error{background:#fef2f2;border:1px solid #fecaca;color:#dc2626;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#1e293b;color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;opacity:0;transition:all 0.3s;z-index:9999;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* STATS ROW */
+.stats-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+.stat-card{flex:1;min-width:100px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.stat-num{font-size:24px;font-weight:700;color:var(--accent);}
+.stat-lbl{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-top:2px;}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<div class="topnav">
+  <div class="nav-logo">
+    <div class="nav-logo-icon">🏠</div>
+    <div class="nav-logo-text">Hostel Dashboard</div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-name" id="nav-name">Owner</span>
+    <button class="nav-logout" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<!-- LAYOUT -->
+<div class="page-layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-menu">
+      <button class="menu-item active" onclick="showSection('overview',this)">
+        <span class="menu-icon">📊</span> Overview
+      </button>
+      <button class="menu-item" onclick="showSection('details',this)">
+        <span class="menu-icon">🏠</span> Hostel Details
+      </button>
+      <button class="menu-item" onclick="showSection('rooms',this)">
+        <span class="menu-icon">🛏</span> Room Prices
+      </button>
+      <button class="menu-item" onclick="showSection('photos',this)">
+        <span class="menu-icon">📷</span> Photos
+      </button>
+      <button class="menu-item" onclick="showSection('amenities',this)">
+        <span class="menu-icon">✨</span> Amenities
+      </button>
+      <button class="menu-item" onclick="showSection('rules',this)">
+        <span class="menu-icon">📋</span> Rules & Timings
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- MSG -->
+    <div class="msg" id="msg"></div>
+
+    <!-- SECTION: OVERVIEW -->
+    <div class="section active" id="section-overview">
+      <div class="page-title">Welcome! 🏠</div>
+      <div class="page-sub" id="overview-sub">Manage your hostel listing</div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num" id="stat-rooms">-</div>
+          <div class="stat-lbl">Total Rooms</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-available">-</div>
+          <div class="stat-lbl">Available</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="stat-photos">0</div>
+          <div class="stat-lbl">Photos</div>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="card-title">🏠 Your Hostel Status</div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span style="font-size:13px;font-weight:600;">Accepting Students:</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="status-toggle"
+              onchange="updateStatus(this.checked)" checked/>
+            <span class="slider"></span>
+          </label>
+          <span id="status-text" style="font-size:13px;color:#22c55e;font-weight:600;">Available</span>
+        </div>
+        <div style="margin-top:16px;">
+          <button class="btn-primary"
+            onclick="showSection('details', document.querySelectorAll('.menu-item')[1])">
+            ✏️ Edit Hostel Details
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION: HOSTEL DETAILS -->
+    <div class="section" id="section-details">
+      <div class="page-title">Hostel Details 🏠</div>
+      <div class="page-sub">Fill in your hostel information visible to students</div>
+
+      <div class="form-card">
+        <div class="card-title">📋 Basic Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Hostel Name *</label>
+            <input class="form-input" id="hostelName" placeholder="e.g. Sri Sai Boys PG"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number *</label>
+            <input class="form-input" id="phone" placeholder="Contact number"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Full Address *</label>
+          <input class="form-input" id="address" placeholder="Street, Area, City"/>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">City *</label>
+            <input class="form-input" id="city" placeholder="e.g. Hyderabad"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">For</label>
+            <select class="form-select" id="genderType">
+              <option value="BOTH">Boys & Girls Both</option>
+              <option value="BOYS">Boys Only</option>
+              <option value="GIRLS">Girls Only</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Google Maps Link</label>
+          <input class="form-input" id="googleMapsLink" placeholder="https://maps.google.com/..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="form-textarea" id="description" placeholder="Describe your hostel..."></textarea>
+        </div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Total Rooms</label>
+            <input class="form-input" id="totalRooms" type="number" placeholder="e.g. 20"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Available Rooms</label>
+            <input class="form-input" id="availableRooms" type="number" placeholder="e.g. 5"/>
+          </div>
+        </div>
+        <button class="btn-primary" onclick="saveDetails()">
+          💾 Save Details
+        </button>
+      </div>
+    </div>
+
+    <!-- SECTION: ROOM PRICES -->
+    <div class="section" id="section-rooms">
+      <div class="page-title">Room Prices 🛏</div>
+      <div class="page-sub">Set prices for different room types</div>
+
+      <div class="form-card">
+        <div class="card-title">💰 Monthly Rent (₹)</div>
+        <div class="price-grid">
+          <div class="price-item">
+            <div class="price-label">🛏 Single Room</div>
+            <input class="form-input" id="singleRoomPrice" placeholder="₹ per month"/>
+          </div>
+          <div class="price-item">
+            <div class="price-label">🛏🛏 Double Sharing</div>
+            <input class="form-input" id="doubleSharePrice" placeholder="₹ per month"/>
+          </div>
+          <div class="price-item">
+            <div class="price-label">🛏🛏🛏 Triple Sharing</div>
+            <input class="form-input" id="tripleSharePrice" placeholder="₹ per month"/>
+          </div>
+          <div class="price-item">
+            <div class="price-label">4️⃣ Four Sharing</div>
+            <input class="form-input" id="fourSharePrice" placeholder="₹ per month"/>
+          </div>
+        </div>
+        <div style="margin-top:16px;">
+          <button class="btn-primary" onclick="savePrices()">
+            💾 Save Prices
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION: PHOTOS -->
+    <div class="section" id="section-photos">
+      <div class="page-title">Photos 📷</div>
+      <div class="page-sub">Upload photos of your hostel (max 10 photos)</div>
+
+      <div class="form-card">
+        <div class="card-title">🖼 Hostel Photos</div>
+        <div class="photo-upload-area" onclick="document.getElementById('photo-input').click()">
+          <div style="font-size:32px;margin-bottom:8px;">📷</div>
+          <div style="font-size:14px;font-weight:600;color:#374151;">Click to upload photo</div>
+          <div style="font-size:12px;color:#64748b;margin-top:4px;">JPG, PNG supported</div>
+        </div>
+        <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="uploadPhoto(this)"/>
+        <div class="photo-grid" id="photo-grid"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: AMENITIES -->
+    <div class="section" id="section-amenities">
+      <div class="page-title">Amenities ✨</div>
+      <div class="page-sub">Select amenities available in your hostel</div>
+
+      <div class="form-card">
+        <div class="card-title">🏠 Available Facilities</div>
+        <div class="amenities-grid" id="amenities-grid">
+          <!-- Auto generated -->
+        </div>
+        <div style="margin-top:16px;">
+          <button class="btn-primary" onclick="saveAmenities()">
+            💾 Save Amenities
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION: RULES -->
+    <div class="section" id="section-rules">
+      <div class="page-title">Rules & Timings 📋</div>
+      <div class="page-sub">Set hostel rules and entry/exit timings</div>
+
+      <div class="form-card">
+        <div class="card-title">⏰ Timings</div>
+        <input class="form-input" id="timings"
+          placeholder="e.g. Entry: 6AM-10PM, Curfew: 10PM"/>
+      </div>
+      <div class="form-card">
+        <div class="card-title">📋 Rules</div>
+        <textarea class="form-textarea" id="rules" style="min-height:120px;"
+          placeholder="Enter hostel rules one per line...&#10;e.g. No smoking allowed&#10;No visitors after 8PM"></textarea>
+        <div style="margin-top:12px;">
+          <button class="btn-primary" onclick="saveRules()">
+            💾 Save Rules & Timings
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT ADS -->
+  <div class="right-ads">
+    <div class="ads-title">📢 Sponsored</div>
+    <div class="ad-box" id="ad-1">
+      <div class="ad-sponsored">Ad</div>
+      <div style="font-size:11px;color:#cbd5e1;">Advertisement</div>
+    </div>
+    <div class="ad-box" id="ad-2">
+      <div class="ad-sponsored">Ad</div>
+      <div style="font-size:11px;color:#cbd5e1;">Advertisement</div>
+    </div>
+    <div class="ad-box" id="ad-3">
+      <div class="ad-sponsored">Ad</div>
+      <div style="font-size:11px;color:#cbd5e1;">Advertisement</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = window.location.origin;
+const token = localStorage.getItem('token');
+const user = JSON.parse(localStorage.getItem('user')||'{}');
+const userType = localStorage.getItem('userType');
+
+// Auth check
+if (!token || userType !== 'HOSTEL') {
+  window.location.href = '/login.html';
+}
+
+// All amenities list
+const ALL_AMENITIES = [
+  'WiFi','Food Included','AC','Hot Water',
+  'Laundry','CCTV Security','Parking','Study Room',
+  'TV Room','Gym','Power Backup','Attached Bathroom',
+  'RO Water','Housekeeping','Newspaper',
+  'Medical Assistance'
+];
+
+let selectedAmenities = [];
+let hostelData = null;
+
+window.onload = async function() {
+  document.getElementById('nav-name').textContent =
+    user.fullName || user.businessName || 'Owner';
+  renderAmenities();
+  await loadHostelData();
+  await loadAds();
+};
+
+function renderAmenities() {
+  const grid = document.getElementById('amenities-grid');
+  grid.innerHTML = ALL_AMENITIES.map(a =>
+    `<button class="amenity-chip ${selectedAmenities.includes(a)?'selected':''}"
+      onclick="toggleAmenity('${a}',this)">${a}</button>`
+  ).join('');
+}
+
+function toggleAmenity(name, btn) {
+  if (selectedAmenities.includes(name)) {
+    selectedAmenities = selectedAmenities.filter(a => a !== name);
+    btn.classList.remove('selected');
+  } else {
+    selectedAmenities.push(name);
+    btn.classList.add('selected');
+  }
+}
+
+async function loadHostelData() {
+  try {
+    const res = await fetch(API + '/api/hostel/my', {
+      headers: {'Authorization': 'Bearer ' + token}
+    });
+    const data = await res.json();
+    if (data.data) {
+      hostelData = data.data;
+      populateForm(hostelData);
+    }
+  } catch(e) { console.log('Load hostel:', e); }
+}
+
+function populateForm(h) {
+  if (!h) return;
+  setValue('hostelName', h.hostelName);
+  setValue('phone', h.phone);
+  setValue('address', h.address);
+  setValue('city', h.city);
+  setValue('googleMapsLink', h.googleMapsLink);
+  setValue('description', h.description);
+  setValue('genderType', h.genderType);
+  setValue('totalRooms', h.totalRooms);
+  setValue('availableRooms', h.availableRooms);
+  setValue('singleRoomPrice', h.singleRoomPrice);
+  setValue('doubleSharePrice', h.doubleSharePrice);
+  setValue('tripleSharePrice', h.tripleSharePrice);
+  setValue('fourSharePrice', h.fourSharePrice);
+  setValue('timings', h.timings);
+  setValue('rules', h.rules);
+
+  // Stats
+  document.getElementById('stat-rooms').textContent =
+    h.totalRooms || '-';
+  document.getElementById('stat-available').textContent =
+    h.availableRooms || '-';
+
+  // Status
+  const toggle = document.getElementById('status-toggle');
+  toggle.checked = h.isAvailable !== false;
+  document.getElementById('status-text').textContent =
+    toggle.checked ? 'Available' : 'Full';
+
+  // Amenities
+  if (h.amenities) {
+    selectedAmenities = h.amenities.split(',')
+      .map(a => a.trim()).filter(a => a);
+    renderAmenities();
+  }
+
+  // Photos
+  if (h.photos) {
+    const urls = h.photos.split(',').filter(u => u);
+    document.getElementById('stat-photos').textContent =
+      urls.length;
+    renderPhotos(urls);
+  }
+
+  // Overview
+  document.getElementById('overview-sub').textContent =
+    h.hostelName || 'Fill in your hostel details';
+}
+
+function renderPhotos(urls) {
+  document.getElementById('photo-grid').innerHTML =
+    urls.map(url => `
+      <div class="photo-item">
+        <img src="${url}" alt="Hostel photo"/>
+        <button class="photo-delete"
+          onclick="deletePhoto('${url}')">✕</button>
+      </div>`).join('');
+}
+
+function setValue(id, val) {
+  const el = document.getElementById(id);
+  if (el && val !== null && val !== undefined) {
+    el.value = val;
+  }
+}
+
+async function saveDetails() {
+  try {
+    const body = {
+      hostelName: getValue('hostelName'),
+      phone: getValue('phone'),
+      address: getValue('address'),
+      city: getValue('city'),
+      googleMapsLink: getValue('googleMapsLink'),
+      description: getValue('description'),
+      genderType: getValue('genderType'),
+      totalRooms: getValue('totalRooms'),
+      availableRooms: getValue('availableRooms')
+    };
+    await saveHostel(body);
+  } catch(e) { showToast('Save failed!'); }
+}
+
+async function savePrices() {
+  await saveHostel({
+    singleRoomPrice: getValue('singleRoomPrice'),
+    doubleSharePrice: getValue('doubleSharePrice'),
+    tripleSharePrice: getValue('tripleSharePrice'),
+    fourSharePrice: getValue('fourSharePrice')
+  });
+}
+
+async function saveAmenities() {
+  await saveHostel({
+    amenities: selectedAmenities.join(',')
+  });
+}
+
+async function saveRules() {
+  await saveHostel({
+    timings: getValue('timings'),
+    rules: getValue('rules')
+  });
+}
+
+async function updateStatus(checked) {
+  document.getElementById('status-text').textContent =
+    checked ? 'Available' : 'Full';
+  document.getElementById('status-text').style.color =
+    checked ? '#22c55e' : '#ef4444';
+  await saveHostel({isAvailable: checked});
+}
+
+async function saveHostel(body) {
+  try {
+    const res = await fetch(API + '/api/hostel/save', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Saved successfully! ✅');
+      hostelData = data.data;
+    } else {
+      showToast(data.message || 'Save failed!');
+    }
+  } catch(e) {
+    showToast('Cannot connect to server!');
+  }
+}
+
+async function uploadPhoto(input) {
+  if (!input.files[0]) return;
+  showToast('Uploading photo...');
+  const formData = new FormData();
+  formData.append('file', input.files[0]);
+  try {
+    const res = await fetch(API + '/api/hostel/upload-photo', {
+      method: 'POST',
+      headers: {'Authorization': 'Bearer ' + token},
+      body: formData
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Photo uploaded! ✅');
+      await loadHostelData();
+    } else {
+      showToast(data.message || 'Upload failed!');
+    }
+  } catch(e) { showToast('Upload failed!'); }
+  input.value = '';
+}
+
+async function deletePhoto(url) {
+  if (!confirm('Delete this photo?')) return;
+  try {
+    const res = await fetch(API + '/api/hostel/photo', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({photoUrl: url})
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Photo deleted! ✅');
+      await loadHostelData();
+    }
+  } catch(e) { showToast('Delete failed!'); }
+}
+
+function getValue(id) {
+  const el = document.getElementById(id);
+  return el ? el.value : '';
+}
+
+function showSection(name, btn) {
+  document.querySelectorAll('.section')
+    .forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + name)
+    .classList.add('active');
+  document.querySelectorAll('.menu-item')
+    .forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+async function loadAds() {
+  try {
+    const res = await fetch(API + '/api/public/ads');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.data) {
+      data.data.slice(0,3).forEach((ad,i) => {
+        const box = document.getElementById('ad-'+(i+1));
+        if (box && ad.imageUrl) {
+          box.innerHTML = `<div class="ad-sponsored">Sponsored</div>
+            <a href="${ad.linkUrl||'#'}" target="_blank">
+            <img src="${ad.imageUrl}" style="width:100%;border-radius:6px;"/></a>`;
+        }
+      });
+    }
+  } catch(e) {}
+}
+
+function logout() {
+  localStorage.clear();
+  window.location.href = '/login.html';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
