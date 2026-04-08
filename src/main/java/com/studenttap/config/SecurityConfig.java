@@ -81,6 +81,19 @@ public class SecurityConfig {
                 .requestMatchers("/css/**").permitAll()
                 .requestMatchers("/js/**").permitAll()
                 .requestMatchers("/images/**").permitAll()
+                
+                
+                .requestMatchers(
+                	    "/api/auth/register",
+                	    "/api/auth/login",
+                	    "/api/auth/register-business",
+                	    "/api/auth/login-business",
+                	    "/api/auth/forgot-password",
+                	    "/api/auth/verify-otp",
+                	    "/api/auth/reset-password",
+                	    "/api/public/**",
+                	    "/api/admin/login"
+                	).permitAll()
 
                 // ✅ Public APIs - No token needed
                 // These open when NFC card is tapped
