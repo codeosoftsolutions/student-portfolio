@@ -92,7 +92,20 @@ public class SecurityConfig {
                 	    "/api/auth/verify-otp",
                 	    "/api/auth/reset-password",
                 	    "/api/public/**",
-                	    "/api/admin/login"
+                	    "/api/admin/login",
+                	    
+                	    "/api/public/hostels",
+                	    "/api/public/hostels/**",
+                	    "/api/public/institutes",
+                	    "/api/public/institutes/**",
+                	    "/hostel-dashboard.html",
+                	    "/institute-dashboard.html",
+                	    "/company-dashboard.html",
+                	    "/hostels.html",
+                	    "/institutes.html",
+                	    "/companies.html",
+                	    "/favicon.ico",
+                	    "/error"
                 	).permitAll()
 
                 // ✅ Public APIs - No token needed

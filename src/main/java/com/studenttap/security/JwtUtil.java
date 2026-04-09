@@ -57,4 +57,9 @@ public class JwtUtil {
             return false;
         }
     }
+
+	public String extractEmail(String token) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
