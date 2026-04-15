@@ -37,6 +37,10 @@ public class Student {
 
     @Column(name = "full_name", length = 150)
     private String fullName;
+    
+    
+    
+    
 
     @Column(length = 150)
     private String designation;
@@ -70,6 +74,8 @@ public class Student {
 
     @Column(name = "github_url", length = 300)
     private String githubUrl;
+    
+    
 
     @Column(name = "website_url", length = 300)
     private String websiteUrl;

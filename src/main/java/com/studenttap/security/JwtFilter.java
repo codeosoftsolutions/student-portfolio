@@ -1,4 +1,4 @@
-
+/*
 package com.studenttap.security;
 
 import jakarta.servlet.FilterChain;
@@ -93,5 +93,127 @@ public class JwtFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);
         }
         return null;
+    }
+}*/
+
+
+
+
+package com.studenttap.security;
+
+import com.studenttap.model.BusinessUser;
+import com.studenttap.repository.BusinessUserRepository;
+import com.studenttap.repository.StudentRepository;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Component
+public class JwtFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private BusinessUserRepository businessUserRepository;
+
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String authHeader = request.getHeader("Authorization");
+
+        System.out.println(">>> JwtFilter: "
+            + request.getMethod() + " "
+            + request.getRequestURI());
+
+        if (authHeader == null ||
+                !authHeader.startsWith("Bearer ")) {
+            System.out.println(">>> No token found in request");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = authHeader.substring(7);
+        System.out.println(">>> Token found, validating...");
+
+        try {
+            if (!jwtUtil.validateToken(token)) {
+                System.out.println(
+                    ">>> Token is INVALID or EXPIRED!");
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            String email = jwtUtil.extractEmail(token);
+            System.out.println(
+                ">>> Token valid for: " + email);
+
+            // ✅ Check if student first
+            var studentOpt = studentRepository
+                .findByEmail(email);
+
+            if (studentOpt.isPresent()) {
+                // Student authentication
+                var auth =
+                    new UsernamePasswordAuthenticationToken(
+                        email, null,
+                        List.of(new SimpleGrantedAuthority(
+                            "ROLE_STUDENT")));
+                SecurityContextHolder.getContext()
+                    .setAuthentication(auth);
+                System.out.println(
+                    ">>> Authentication set for: " + email
+                    + " (STUDENT)");
+
+            } else {
+                // ✅ Check if business user
+                var businessOpt = businessUserRepository
+                    .findByEmail(email);
+
+                if (businessOpt.isPresent()) {
+                    BusinessUser bu = businessOpt.get();
+                    String role = "ROLE_"
+                        + bu.getUserType().name();
+
+                    var auth =
+                        new UsernamePasswordAuthenticationToken(
+                            email, null,
+                            List.of(new SimpleGrantedAuthority(
+                                role)));
+                    SecurityContextHolder.getContext()
+                        .setAuthentication(auth);
+                    System.out.println(
+                        ">>> Authentication set for: "
+                        + email + " ("
+                        + bu.getUserType().name() + ")");
+                } else {
+                    System.out.println(
+                        ">>> User not found: " + email);
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println(
+                ">>> JWT Error: " + e.getMessage());
+        }
+
+        filterChain.doFilter(request, response);
     }
 }

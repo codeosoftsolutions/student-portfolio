@@ -171,6 +171,7 @@ package com.studenttap.controller;
 
 import com.studenttap.dto.ApiResponse;
 
+
 import com.studenttap.model.Student;
 import com.studenttap.repository.ResumeRepository;
 import com.studenttap.repository.StudentRepository;
@@ -181,6 +182,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.studenttap.model.BusinessUser;
+import com.studenttap.repository.BusinessUserRepository;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/public")
 @CrossOrigin(origins = "*")
@@ -188,6 +196,9 @@ public class PublicController {
 
     @Autowired
     private ProfileService profileService;
+    
+    @Autowired
+ private BusinessUserRepository businessUserRepository;
 
     @Autowired
     private EducationService educationService;
@@ -317,6 +328,48 @@ public class PublicController {
     }
     
     */
+    
+    
+    
+    
+ // ===================================================
+ // 🌐 PUBLIC - GET /api/public/companies
+ // Students see all registered companies
+ // ===================================================
+ @GetMapping("/api/public/companies")
+ public ResponseEntity<?> getPublicCompanies() {
+     try {
+         List<BusinessUser> companies =
+             businessUserRepository.findByUserType(
+                 BusinessUser.UserType.COMPANY);
+  
+         // Return only safe public info
+         // (no passwords etc.)
+         List<Map<String, Object>> result =
+             new ArrayList<>();
+  
+         for (BusinessUser c : companies) {
+             if (!c.getIsActive()) continue;
+             Map<String, Object> data = new HashMap<>();
+             data.put("id", c.getId());
+             data.put("businessName", c.getBusinessName());
+             data.put("fullName", c.getFullName());
+             data.put("email", c.getEmail());
+             data.put("phone", c.getPhone());
+             data.put("city", c.getCity());
+             data.put("industry", c.getIndustry());
+             result.add(data);
+         }
+  
+         return ResponseEntity.ok(
+             ApiResponse.success("Companies", result));
+     } catch (Exception e) {
+         return ResponseEntity.badRequest()
+             .body(ApiResponse.error(e.getMessage()));
+     }
+ }
+    
+    
     
     
     @GetMapping("/resume/{username}")

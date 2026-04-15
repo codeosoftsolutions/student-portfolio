@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Panel — StudentTap</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--primary:#0f172a;--sidebar:#1e293b;--accent:#6366f1;--bg:#f8fafc;--card:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;}
+body{font-family:'Sora',sans-serif;background:var(--bg);min-height:100vh;display:flex;}
+
+/* SIDEBAR */
+.sidebar{width:240px;background:var(--sidebar);min-height:100vh;flex-shrink:0;display:flex;flex-direction:column;}
+.sidebar-logo{padding:20px 16px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#6366f1,#818cf8);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.logo-text{font-size:15px;font-weight:700;color:white;}
+.logo-sub{font-size:10px;color:#64748b;margin-top:2px;}
+.sidebar-menu{padding:12px 8px;flex:1;}
+.menu-section{font-size:10px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:1px;padding:12px 8px 6px;}
+.menu-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;color:#94a3b8;transition:all 0.2s;border:none;background:none;font-family:'Sora',sans-serif;width:100%;text-align:left;margin-bottom:2px;}
+.menu-item:hover{background:rgba(255,255,255,0.05);color:white;}
+.menu-item.active{background:rgba(99,102,241,0.2);color:#a5b4fc;font-weight:600;}
+.menu-icon{font-size:16px;width:20px;}
+.sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,0.1);}
+.admin-info{font-size:12px;color:#64748b;}
+.logout-btn{width:100%;padding:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;border-radius:8px;font-family:'Sora',sans-serif;font-size:12px;cursor:pointer;margin-top:8px;}
+
+/* MAIN */
+.main-content{flex:1;padding:24px;overflow-y:auto;}
+.page-header{margin-bottom:24px;}
+.page-title{font-size:22px;font-weight:700;color:var(--text);}
+.page-sub{font-size:13px;color:var(--muted);margin-top:4px;}
+
+/* SECTIONS */
+.section{display:none;}
+.section.active{display:block;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;}
+.stat-num{font-size:32px;font-weight:700;}
+.stat-lbl{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;margin-top:4px;}
+.stat-students .stat-num{color:#6366f1;}
+.stat-hostels .stat-num{color:#22c55e;}
+.stat-institutes .stat-num{color:#f97316;}
+.stat-companies .stat-num{color:#3b82f6;}
+
+/* TABLE CARD */
+.table-card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;}
+.table-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.table-title{font-size:15px;font-weight:700;color:var(--text);}
+.export-btn{padding:8px 16px;background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.export-btn:hover{opacity:0.9;}
+.data-table{width:100%;border-collapse:collapse;}
+.data-table th{padding:11px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;background:#f8fafc;border-bottom:1px solid var(--border);}
+.data-table td{padding:11px 14px;font-size:13px;color:var(--text);border-bottom:1px solid #f8fafc;vertical-align:middle;}
+.data-table tr:hover td{background:#f8fafc;}
+.data-table tr:last-child td{border-bottom:none;}
+.badge{padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;}
+.badge-active{background:#f0fdf4;color:#16a34a;}
+.badge-blocked{background:#fef2f2;color:#dc2626;}
+.badge-fresher{background:#eff6ff;color:#1d4ed8;}
+.badge-exp{background:#fff7ed;color:#ea580c;}
+.action-btn{padding:5px 10px;border:none;border-radius:6px;font-family:'Sora',sans-serif;font-size:11px;font-weight:600;cursor:pointer;}
+.btn-block{background:#fef2f2;color:#dc2626;}
+.btn-unblock{background:#f0fdf4;color:#16a34a;}
+
+/* ADS SECTION */
+.ads-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+@media(max-width:900px){.ads-grid{grid-template-columns:repeat(2,1fr);}}
+.ad-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+.ad-img{width:100%;height:120px;object-fit:cover;background:#f1f5f9;}
+.ad-body{padding:12px;}
+.ad-title{font-size:13px;font-weight:600;color:var(--text);}
+.ad-target{font-size:11px;color:var(--muted);margin-top:3px;}
+.ad-actions{display:flex;gap:6px;margin-top:10px;}
+.btn-toggle{padding:5px 10px;border:none;border-radius:6px;font-family:'Sora',sans-serif;font-size:11px;font-weight:600;cursor:pointer;}
+.btn-active{background:#f0fdf4;color:#16a34a;}
+.btn-inactive{background:#fef9c3;color:#ca8a04;}
+.btn-delete{padding:5px 10px;background:#fef2f2;color:#dc2626;border:none;border-radius:6px;font-family:'Sora',sans-serif;font-size:11px;font-weight:600;cursor:pointer;}
+
+/* UPLOAD AD FORM */
+.upload-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;}
+.card-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:16px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-group{margin-bottom:12px;}
+.form-label{font-size:12px;font-weight:600;color:#374151;margin-bottom:5px;display:block;}
+.form-input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:'Sora',sans-serif;font-size:13px;outline:none;}
+.form-input:focus{border-color:var(--accent);}
+.form-select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:10px;font-family:'Sora',sans-serif;font-size:13px;outline:none;background:white;}
+.upload-area{border:2px dashed var(--border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;margin-bottom:12px;}
+.upload-area:hover{border-color:var(--accent);}
+.btn-primary{padding:11px 20px;background:linear-gradient(135deg,#6366f1,#818cf8);color:white;border:none;border-radius:10px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+
+/* SEARCH */
+.search-input{padding:8px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;outline:none;min-width:200px;}
+.search-input:focus{border-color:var(--accent);}
+
+/* EMPTY */
+.empty-row td{text-align:center;padding:40px;color:var(--muted);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;opacity:0;transition:all 0.3s;z-index:9999;transform:translateY(20px);}
+.toast.show{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-wrap">
+      <div class="logo-icon">⚙️</div>
+      <div>
+        <div class="logo-text">Admin Panel</div>
+        <div class="logo-sub">StudentTap</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-menu">
+    <div class="menu-section">Overview</div>
+    <button class="menu-item active"
+      onclick="showSection('dashboard',this)">
+      <span class="menu-icon">📊</span> Dashboard
+    </button>
+
+    <div class="menu-section">Users</div>
+    <button class="menu-item"
+      onclick="showSection('students',this)">
+      <span class="menu-icon">👨‍🎓</span> Students
+    </button>
+    <button class="menu-item"
+      onclick="showSection('hostels',this)">
+      <span class="menu-icon">🏠</span> Hostels
+    </button>
+    <button class="menu-item"
+      onclick="showSection('institutes',this)">
+      <span class="menu-icon">🏫</span> Institutes
+    </button>
+    <button class="menu-item"
+      onclick="showSection('companies',this)">
+      <span class="menu-icon">🏢</span> Companies
+    </button>
+
+    <div class="menu-section">Content</div>
+    <button class="menu-item"
+      onclick="showSection('ads',this)">
+      <span class="menu-icon">📢</span> Advertisements
+    </button>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="admin-info" id="admin-info">Admin</div>
+    <button class="logout-btn" onclick="logout()">
+      🚪 Logout
+    </button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+  <!-- DASHBOARD -->
+  <div class="section active" id="section-dashboard">
+    <div class="page-header">
+      <div class="page-title">Dashboard 📊</div>
+      <div class="page-sub">Platform overview</div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card stat-students">
+        <div class="stat-num" id="stat-students">0</div>
+        <div class="stat-lbl">👨‍🎓 Students</div>
+      </div>
+      <div class="stat-card stat-hostels">
+        <div class="stat-num" id="stat-hostels">0</div>
+        <div class="stat-lbl">🏠 Hostels</div>
+      </div>
+      <div class="stat-card stat-institutes">
+        <div class="stat-num" id="stat-institutes">0</div>
+        <div class="stat-lbl">🏫 Institutes</div>
+      </div>
+      <div class="stat-card stat-companies">
+        <div class="stat-num" id="stat-companies">0</div>
+        <div class="stat-lbl">🏢 Companies</div>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">📢 Active Advertisements</div>
+        <button class="btn-primary" style="font-size:12px;padding:8px 14px;"
+          onclick="showSection('ads',document.querySelectorAll('.menu-item')[5])">
+          + Add New Ad
+        </button>
+      </div>
+      <div style="padding:20px;color:var(--muted);text-align:center;" id="dash-ads-summary">
+        Loading...
+      </div>
+    </div>
+  </div>
+
+  <!-- STUDENTS -->
+  <div class="section" id="section-students">
+    <div class="page-header">
+      <div class="page-title">Students 👨‍🎓</div>
+      <div class="page-sub">All registered students</div>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Student List</div>
+        <div style="display:flex;gap:10px;">
+          <input class="search-input" placeholder="Search students..."
+            oninput="filterTable('students-tbody', this.value)"/>
+          <button class="export-btn"
+            onclick="exportExcel('students')">
+            📊 Export Excel
+          </button>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Name</th><th>Username</th>
+              <th>Email</th><th>Phone</th>
+              <th>Skills</th><th>Type</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="students-tbody">
+            <tr class="empty-row">
+              <td colspan="8">⏳ Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOSTELS -->
+  <div class="section" id="section-hostels">
+    <div class="page-header">
+      <div class="page-title">Hostels 🏠</div>
+      <div class="page-sub">All registered hostel owners</div>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Hostel Owner List</div>
+        <button class="export-btn"
+          onclick="exportExcel('hostel')">
+          📊 Export Excel
+        </button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Owner Name</th>
+              <th>Business Name</th><th>Email</th>
+              <th>Phone</th><th>City</th>
+              <th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="hostels-tbody">
+            <tr class="empty-row">
+              <td colspan="8">⏳ Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTITUTES -->
+  <div class="section" id="section-institutes">
+    <div class="page-header">
+      <div class="page-title">Institutes 🏫</div>
+      <div class="page-sub">All registered institutes</div>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Institute List</div>
+        <button class="export-btn"
+          onclick="exportExcel('institute')">
+          📊 Export Excel
+        </button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Contact Person</th>
+              <th>Institute Name</th><th>Email</th>
+              <th>Phone</th><th>City</th>
+              <th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="institutes-tbody">
+            <tr class="empty-row">
+              <td colspan="8">⏳ Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPANIES -->
+  <div class="section" id="section-companies">
+    <div class="page-header">
+      <div class="page-title">Companies 🏢</div>
+      <div class="page-sub">All registered companies</div>
+    </div>
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">Company List</div>
+        <button class="export-btn"
+          onclick="exportExcel('company')">
+          📊 Export Excel
+        </button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Contact</th>
+              <th>Company Name</th><th>Email</th>
+              <th>Phone</th><th>Industry</th>
+              <th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="companies-tbody">
+            <tr class="empty-row">
+              <td colspan="8">⏳ Loading...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADS -->
+  <div class="section" id="section-ads">
+    <div class="page-header">
+      <div class="page-title">Advertisements 📢</div>
+      <div class="page-sub">Manage ads shown on all pages</div>
+    </div>
+
+    <!-- Upload New Ad -->
+    <div class="upload-card">
+      <div class="card-title">➕ Upload New Advertisement</div>
+      <div class="upload-area"
+        onclick="document.getElementById('ad-file').click()">
+        <div style="font-size:28px;margin-bottom:8px;">🖼</div>
+        <div style="font-size:13px;font-weight:600;">Click to select ad image</div>
+        <div style="font-size:11px;color:#64748b;margin-top:4px;">JPG, PNG - Recommended: 300x250px</div>
+        <div id="ad-file-name" style="font-size:12px;color:#6366f1;margin-top:6px;"></div>
+      </div>
+      <input type="file" id="ad-file" accept="image/*"
+        style="display:none"
+        onchange="document.getElementById('ad-file-name').textContent=this.files[0]?.name||''"/>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Ad Title *</label>
+          <input class="form-input" id="ad-title"
+            placeholder="e.g. Flat 20% off at XYZ"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Click URL</label>
+          <input class="form-input" id="ad-link"
+            placeholder="https://..."/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target Audience</label>
+          <select class="form-select" id="ad-target">
+            <option value="ALL">All Users</option>
+            <option value="STUDENT">Students Only</option>
+            <option value="HOSTEL">Hostel Owners</option>
+            <option value="INSTITUTE">Institutes</option>
+            <option value="COMPANY">Companies</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Display Order</label>
+          <input class="form-input" id="ad-order"
+            type="number" placeholder="0" value="0"/>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="uploadAd()">
+        📢 Upload Advertisement
+      </button>
+    </div>
+
+    <!-- Existing Ads -->
+    <div class="table-card">
+      <div class="table-header">
+        <div class="table-title">All Advertisements</div>
+        <div id="ads-count" style="font-size:12px;color:#64748b;"></div>
+      </div>
+      <div class="ads-grid" id="ads-grid" style="padding:16px;">
+        <div style="color:#64748b;font-size:13px;">Loading ads...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const API = window.location.origin;
+const adminToken = localStorage.getItem('adminToken');
+const adminUser = JSON.parse(
+  localStorage.getItem('adminUser')||'{}');
+
+// Auth check
+if (!adminToken) {
+  window.location.href = '/admin-login.html';
+}
+
+// Set admin info
+document.getElementById('admin-info').textContent =
+  adminUser.fullName || adminUser.email || 'Admin';
+
+const headers = {
+  'Content-Type': 'application/json',
+  'Authorization': 'Bearer ' + adminToken
+};
+
+window.onload = async function() {
+  await loadDashboard();
+  await loadStudents();
+  await loadBusiness('hostels', 'HOSTEL');
+  await loadBusiness('institutes', 'INSTITUTE');
+  await loadBusiness('companies', 'COMPANY');
+  await loadAds();
+};
+
+// ===== DASHBOARD =====
+async function loadDashboard() {
+  try {
+    const res = await fetch(
+      API + '/api/admin/dashboard', {headers});
+    const data = await res.json();
+    if (data.data) {
+      const d = data.data;
+      document.getElementById('stat-students')
+        .textContent = d.totalStudents || 0;
+      document.getElementById('stat-hostels')
+        .textContent = d.totalHostels || 0;
+      document.getElementById('stat-institutes')
+        .textContent = d.totalInstitutes || 0;
+      document.getElementById('stat-companies')
+        .textContent = d.totalCompanies || 0;
+      document.getElementById('dash-ads-summary')
+        .textContent = d.totalAds + ' ads configured';
+    }
+  } catch(e) {}
+}
+
+// ===== STUDENTS =====
+async function loadStudents() {
+  try {
+    const res = await fetch(
+      API + '/api/admin/students', {headers});
+    const data = await res.json();
+    const students = data.data || [];
+
+    document.getElementById('students-tbody').innerHTML =
+      students.length === 0
+      ? '<tr class="empty-row"><td colspan="8">No students yet</td></tr>'
+      : students.map((s, i) => `
+        <tr>
+          <td>${i+1}</td>
+          <td><strong>${s.fullName||'-'}</strong></td>
+          <td>@${s.username||'-'}</td>
+          <td style="font-size:12px;">${s.email||'-'}</td>
+          <td>${s.phone||'-'}</td>
+          <td style="font-size:11px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+            ${s.skills||'-'}
+          </td>
+          <td>
+            <span class="badge ${s.isFresher?'badge-fresher':'badge-exp'}">
+              ${s.isFresher?'Fresher':'Experienced'}
+            </span>
+          </td>
+          <td>
+            <button class="action-btn ${s.isActive===false?'btn-unblock':'btn-block'}"
+              onclick="toggleBlock('STUDENT',${s.id},${s.isActive!==false})">
+              ${s.isActive===false?'Unblock':'Block'}
+            </button>
+          </td>
+        </tr>`).join('');
+  } catch(e) {}
+}
+
+// ===== BUSINESS USERS =====
+async function loadBusiness(tbodyId, type) {
+  try {
+    const endpoint = type === 'HOSTEL'
+      ? 'hostels' : type === 'INSTITUTE'
+      ? 'institutes' : 'companies';
+
+    const res = await fetch(
+      API + '/api/admin/' + endpoint, {headers});
+    const data = await res.json();
+    const users = data.data || [];
+
+    document.getElementById(tbodyId + '-tbody').innerHTML =
+      users.length === 0
+      ? `<tr class="empty-row"><td colspan="8">No ${tbodyId} yet</td></tr>`
+      : users.map((u, i) => `
+        <tr>
+          <td>${i+1}</td>
+          <td>${u.fullName||'-'}</td>
+          <td><strong>${u.businessName||'-'}</strong></td>
+          <td style="font-size:12px;">${u.email||'-'}</td>
+          <td>${u.phone||'-'}</td>
+          <td>${u.city||u.industry||'-'}</td>
+          <td>
+            <span class="badge ${u.isActive?'badge-active':'badge-blocked'}">
+              ${u.isActive?'Active':'Blocked'}
+            </span>
+          </td>
+          <td>
+            <button class="action-btn ${u.isActive?'btn-block':'btn-unblock'}"
+              onclick="toggleBlock('${type}',${u.id},${u.isActive})">
+              ${u.isActive?'Block':'Unblock'}
+            </button>
+          </td>
+        </tr>`).join('');
+  } catch(e) {}
+}
+
+// ===== BLOCK/UNBLOCK =====
+async function toggleBlock(userType, userId, currentActive) {
+  if (!confirm(currentActive
+    ? 'Block this user?' : 'Unblock this user?')) return;
+
+  try {
+    const res = await fetch(
+      API + '/api/admin/block-user', {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({
+        userType, userId: String(userId),
+        block: String(currentActive)
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message);
+      // Reload relevant table
+      if (userType === 'STUDENT') await loadStudents();
+      else if (userType === 'HOSTEL')
+        await loadBusiness('hostels', 'HOSTEL');
+      else if (userType === 'INSTITUTE')
+        await loadBusiness('institutes', 'INSTITUTE');
+      else if (userType === 'COMPANY')
+        await loadBusiness('companies', 'COMPANY');
+    }
+  } catch(e) { showToast('Failed!'); }
+}
+
+// ===== EXCEL EXPORT =====
+function exportExcel(type) {
+  const endpoint = type === 'students'
+    ? '/api/admin/export/students'
+    : '/api/admin/export/business?type='
+      + type.toUpperCase();
+
+  // Create link with auth
+  const link = document.createElement('a');
+  link.href = API + endpoint +
+    (endpoint.includes('?') ? '&' : '?') +
+    'token=' + adminToken;
+  link.download = type + '.xlsx';
+  link.click();
+  showToast('Downloading ' + type + '.xlsx...');
+}
+
+// ===== ADS =====
+async function loadAds() {
+  try {
+    const res = await fetch(
+      API + '/api/admin/ads', {headers});
+    const data = await res.json();
+    const ads = data.data || [];
+
+    document.getElementById('ads-count').textContent =
+      ads.length + ' ads total';
+
+    if (ads.length === 0) {
+      document.getElementById('ads-grid').innerHTML =
+        '<div style="color:#64748b;font-size:13px;padding:20px;">No ads yet. Upload one above!</div>';
+      return;
+    }
+
+    document.getElementById('ads-grid').innerHTML =
+      ads.map(ad => `
+        <div class="ad-card">
+          ${ad.imageUrl
+            ? `<img class="ad-img" src="${ad.imageUrl}" alt="Ad"/>`
+            : '<div class="ad-img" style="display:flex;align-items:center;justify-content:center;font-size:32px;">🖼</div>'}
+          <div class="ad-body">
+            <div class="ad-title">${ad.title||'Untitled'}</div>
+            <div class="ad-target">
+              Target: ${ad.targetAudience||'ALL'} |
+              Order: ${ad.displayOrder||0}
+            </div>
+            <div class="ad-actions">
+              <button class="btn-toggle ${ad.isActive?'btn-active':'btn-inactive'}"
+                onclick="toggleAd(${ad.id})">
+                ${ad.isActive?'✅ Active':'⏸ Inactive'}
+              </button>
+              <button class="btn-delete"
+                onclick="deleteAd(${ad.id})">
+                🗑 Delete
+              </button>
+            </div>
+          </div>
+        </div>`).join('');
+  } catch(e) {}
+}
+
+async function uploadAd() {
+  const fileInput = document.getElementById('ad-file');
+  const title = document.getElementById('ad-title')
+    .value.trim();
+  const linkUrl = document.getElementById('ad-link')
+    .value.trim();
+  const target = document.getElementById('ad-target')
+    .value;
+  const order = document.getElementById('ad-order')
+    .value || '0';
+
+  if (!fileInput.files[0]) {
+    showToast('Please select an image!'); return;
+  }
+  if (!title) {
+    showToast('Please enter ad title!'); return;
+  }
+
+  showToast('Uploading ad...');
+
+  const formData = new FormData();
+  formData.append('file', fileInput.files[0]);
+  formData.append('title', title);
+  formData.append('linkUrl', linkUrl || '#');
+  formData.append('targetAudience', target);
+  formData.append('displayOrder', order);
+
+  try {
+    const res = await fetch(API + '/api/admin/ads', {
+      method: 'POST',
+      headers: {'Authorization': 'Bearer ' + adminToken},
+      body: formData
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Ad uploaded! ✅');
+      // Reset form
+      fileInput.value = '';
+      document.getElementById('ad-file-name')
+        .textContent = '';
+      document.getElementById('ad-title').value = '';
+      document.getElementById('ad-link').value = '';
+      await loadAds();
+      await loadDashboard();
+    } else {
+      showToast(data.message || 'Upload failed!');
+    }
+  } catch(e) { showToast('Upload failed!'); }
+}
+
+async function toggleAd(id) {
+  try {
+    const res = await fetch(
+      API + '/api/admin/ads/' + id + '/toggle', {
+      method: 'PUT',
+      headers
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message);
+      await loadAds();
+    }
+  } catch(e) { showToast('Failed!'); }
+}
+
+async function deleteAd(id) {
+  if (!confirm('Delete this ad?')) return;
+  try {
+    const res = await fetch(
+      API + '/api/admin/ads/' + id, {
+      method: 'DELETE',
+      headers
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Ad deleted! ✅');
+      await loadAds();
+    }
+  } catch(e) { showToast('Failed!'); }
+}
+
+// ===== HELPERS =====
+function filterTable(tbodyId, search) {
+  const tbody = document.getElementById(tbodyId);
+  const rows = tbody.querySelectorAll('tr');
+  const q = search.toLowerCase();
+  rows.forEach(row => {
+    row.style.display =
+      row.textContent.toLowerCase().includes(q)
+      ? '' : 'none';
+  });
+}
+
+function showSection(name, btn) {
+  document.querySelectorAll('.section')
+    .forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + name)
+    .classList.add('active');
+  document.querySelectorAll('.menu-item')
+    .forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+}
+
+function logout() {
+  localStorage.removeItem('adminToken');
+  localStorage.removeItem('adminUser');
+  window.location.href = '/admin-login.html';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
