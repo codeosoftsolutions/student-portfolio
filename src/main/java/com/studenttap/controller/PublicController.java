@@ -172,6 +172,7 @@ package com.studenttap.controller;
 import com.studenttap.dto.ApiResponse;
 
 
+
 import com.studenttap.model.Student;
 import com.studenttap.repository.ResumeRepository;
 import com.studenttap.repository.StudentRepository;
@@ -330,7 +331,7 @@ public class PublicController {
     */
     
     
-    
+   // After client modification compinies are getting 
     
  // ===================================================
  // 🌐 PUBLIC - GET /api/public/companies
@@ -370,6 +371,15 @@ public class PublicController {
  }
     
     
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
     
     
     @GetMapping("/resume/{username}")

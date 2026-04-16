@@ -95,6 +95,28 @@ body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-he
 /* ===== MAIN CONTENT ===== */
 .main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;}
 
+
+.page-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+.right-ads {
+  width: 200px;
+  flex-shrink: 0;
+  background: #f1f5f9;
+  border-left: 1px solid var(--border);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  z-index: 40;
+}
+
 .topbar{
   background:var(--card);border-bottom:1px solid var(--border);
   padding:0 24px;height:64px;display:flex;align-items:center;
