@@ -83,8 +83,13 @@ public class Student {
     @Column(name = "is_fresher")
     private Boolean isFresher = true;
 
-    @Column(name = "is_active")
+    //@Column(name = "is_active")
+    //private Boolean isActive = true;
+    
+ // Add to Student.java model updated variable after some  modifications
+    @Column(nullable = false)
     private Boolean isActive = true;
+    
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
