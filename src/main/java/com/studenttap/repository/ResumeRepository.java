@@ -9,7 +9,7 @@ import java.util.Optional;
  
 @Repository
 public interface ResumeRepository
-        extends JpaRepository<Resume, Long> {
+        extends JpaRepository<Resume, Long> {	
  
     // Each student has only one resume
     Optional<Resume> findByStudentId(Long studentId);

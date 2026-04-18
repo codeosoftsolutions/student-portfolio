@@ -4,6 +4,7 @@
 package com.studenttap.repository;
  
 import com.studenttap.model.Education;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -26,7 +27,7 @@ public interface EducationRepository
  // Get all education records for a student
     List<Education> findByStudentId(Long studentId);
  
-    // ✅ Count education records for student stats
+    // ✅ Count education records for student stats																									
     long countByStudentId(Long studentId);
  
     // Find by student and education type

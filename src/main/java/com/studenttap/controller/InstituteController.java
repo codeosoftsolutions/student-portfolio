@@ -20,7 +20,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
-public class InstituteController {
+public class InstituteController {// nkjbfgfbdub ghvuyfsa fuysa  ug
 
     @Autowired
     private InstituteRepository instituteRepository;
