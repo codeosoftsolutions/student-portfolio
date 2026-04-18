@@ -220,6 +220,12 @@ public class JwtFilter extends OncePerRequestFilter {
 
 
 
+
+/*
+
+
+
+
 package com.studenttap.security;
 
 import com.studenttap.model.BusinessUser;
@@ -354,3 +360,177 @@ public class JwtFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 }
+*/
+
+
+package com.studenttap.security;
+
+import com.studenttap.model.BusinessUser;
+import com.studenttap.repository.BusinessUserRepository;
+import com.studenttap.repository.StudentRepository;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Component
+public class JwtFilter extends OncePerRequestFilter {
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
+    private BusinessUserRepository businessUserRepository;
+
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String authHeader =
+            request.getHeader("Authorization");
+
+        // No token - continue without auth
+        if (authHeader == null ||
+                !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = authHeader.substring(7);
+
+        try {
+            // Validate token first
+            if (!jwtUtil.validateToken(token)) {
+                System.out.println(
+                    ">>> Token INVALID");
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            // ✅ Extract email safely
+            String email = jwtUtil.extractEmail(token);
+
+            // ✅ NULL CHECK - very important!
+            if (email == null || email.isEmpty()) {
+                System.out.println(
+                    ">>> Email is null in token!");
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            System.out.println(
+                ">>> Token valid for: " + email);
+
+            // Skip if already authenticated
+            if (SecurityContextHolder.getContext()
+                    .getAuthentication() != null) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            // ✅ Check if ADMIN token
+            if (email.startsWith("ADMIN:")) {
+                String adminEmail =
+                    email.substring(6);
+                var auth =
+                    new UsernamePasswordAuthenticationToken(
+                        adminEmail, null,
+                        List.of(new SimpleGrantedAuthority(
+                            "ROLE_ADMIN")));
+                SecurityContextHolder.getContext()
+                    .setAuthentication(auth);
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            // ✅ Check if STUDENT
+            var studentOpt = studentRepository
+                .findByEmail(email);
+
+            if (studentOpt.isPresent()) {
+                System.out.println(
+                    ">>> Auth set: STUDENT - " + email);
+                var auth =
+                    new UsernamePasswordAuthenticationToken(
+                        email, null,
+                        List.of(new SimpleGrantedAuthority(
+                            "ROLE_STUDENT")));
+                SecurityContextHolder.getContext()
+                    .setAuthentication(auth);
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            // ✅ Check if BUSINESS USER
+            var businessOpt = businessUserRepository
+                .findByEmail(email);
+
+            if (businessOpt.isPresent()) {
+                BusinessUser bu = businessOpt.get();
+                String role = "ROLE_"
+                    + bu.getUserType().name();
+                System.out.println(
+                    ">>> Auth set: " + role
+                    + " - " + email);
+                var auth =
+                    new UsernamePasswordAuthenticationToken(
+                        email, null,
+                        List.of(new SimpleGrantedAuthority(
+                            role)));
+                SecurityContextHolder.getContext()
+                    .setAuthentication(auth);
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            System.out.println(
+                ">>> User not found: " + email);
+
+        } catch (Exception e) {
+            System.out.println(
+                ">>> JWT Error: " + e.getMessage());
+        }
+
+        filterChain.doFilter(request, response);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
