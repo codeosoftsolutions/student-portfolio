@@ -295,20 +295,21 @@ function renderTable(students) {
   }
 
   tbody.innerHTML = students.map(s => {
-    // ✅ FIXED: Safe avatar - no onerror crash
+    // ✅ FIXED: Smart avatar
+    // Only show image if it's a Cloudinary URL (starts with https://res.cloudinary)
+    // Local filenames (UUIDs) are skipped - show initials instead
+    const initial = (s.fullName||'S').charAt(0).toUpperCase();
     let avatarContent = '';
-    if (s.profilePhoto) {
-      const imgUrl = getImageUrl(s.profilePhoto);
-      // Only show image if it's a valid URL
-      if (imgUrl && imgUrl.startsWith('http')) {
-        avatarContent = `<img src="${imgUrl}"
+    if (s.profilePhoto &&
+        s.profilePhoto.includes('cloudinary.com')) {
+      // ✅ Cloudinary URL - show image
+      avatarContent = `
+        <img src="${s.profilePhoto}"
           style="width:100%;height:100%;border-radius:50%;object-fit:cover;"
-          onerror="this.remove()"/>`;
-      } else {
-        avatarContent = `<span>${(s.fullName||'S').charAt(0).toUpperCase()}</span>`;
-      }
+          onerror="this.parentElement.innerHTML='<span>${initial}</span>'"/>`;
     } else {
-      avatarContent = `<span>${(s.fullName||'S').charAt(0).toUpperCase()}</span>`;
+      // Local file or no photo - show initials
+      avatarContent = `<span>${initial}</span>`;
     }
 
     // Skills
